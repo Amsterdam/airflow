@@ -1,4 +1,8 @@
 import operator
+
+import sys
+print(sys.path)
+
 import requests
 
 from airflow import DAG
