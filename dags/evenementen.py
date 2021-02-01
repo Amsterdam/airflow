@@ -1,5 +1,9 @@
 import operator
 
+import sys
+sys.path.append('/opt/bitnami/airflow/dags/git-dags/')
+print(sys.path)
+
 import requests
 
 from airflow import DAG
