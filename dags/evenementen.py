@@ -9,7 +9,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 
 from provenance_rename_operator import ProvenanceRenameOperator
 from postgres_rename_operator import PostgresTableRenameOperator
-from pyogr.ogr2ogr import main
+from ogrtools.pyogr.ogr2ogr import main
 
 from common import (
     default_args,
