@@ -30,6 +30,10 @@ RUN apt-get update \
         libtiff5 \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
+COPY requirements* ./
+ARG PIP_REQUIREMENTS=requirements.txt
+RUN /opt/bitnami/airflow/venv/bin/pip install --no-cache-dir -r $PIP_REQUIREMENTS
+
 EXPOSE 8080
 
 USER 1001
