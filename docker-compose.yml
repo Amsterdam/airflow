@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    environment:
+      SCHEMA_URL:  "https://schemas.data.amsterdam.nl/datasets/"
+      SLACK_WEBHOOK: "https://api.data.amsterdam.nl/nowhere"
+    volumes:
+      - ./dags:/opt/bitnami/airflow/dags
+      - ./plugins:/opt/bitnami/airflow/plugins
