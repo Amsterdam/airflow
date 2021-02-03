@@ -1,0 +1,37 @@
+FROM docker.io/bitnami/airflow-worker:1.10.14
+LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
+
+USER root
+RUN apt-get update \
+ && apt-get dist-upgrade -y \
+ && apt-get autoremove -y \
+ && apt-get install --no-install-recommends -y \
+        unzip \
+        wget \
+        dnsutils \
+        vim-tiny \
+        net-tools \
+        netcat \
+        libgeos-3.7 \
+        gdal-bin \
+        postgresql-client-11 \
+        libgdal20 \
+        libspatialite7 \
+        libfreexl1 \
+        libgeotiff2 \
+        libwebp6 \
+        proj-bin \
+        mime-support \
+        gettext \
+        libwebpmux3 \
+        libwebpdemux2 \
+        libxml2 \
+        libfreetype6 \
+        libtiff5 \
+  && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
+
+EXPOSE 8080
+
+USER 1001
+ENTRYPOINT [ "/app-entrypoint.sh" ]
+CMD [ "/run.sh" ]
