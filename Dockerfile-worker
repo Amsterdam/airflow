@@ -30,9 +30,9 @@ RUN apt-get update \
         libtiff5 \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
-COPY requirements* ./
-ARG PIP_REQUIREMENTS=requirements.txt
-RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
+COPY requirements.txt /bitnami/python/requirements.txt
+# ARG PIP_REQUIREMENTS=requirements.txt
+# RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
 
 EXPOSE 8080
 
