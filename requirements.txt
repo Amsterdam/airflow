@@ -374,5 +374,3 @@ zope.deprecation==4.4.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
-
-ogrtools
