@@ -9,7 +9,6 @@ from airflow.operators.postgres_operator import PostgresOperator
 
 from provenance_rename_operator import ProvenanceRenameOperator
 from postgres_rename_operator import PostgresTableRenameOperator
-from ogrtools.pyogr.ogr2ogr import main
 
 from common import (
     default_args,
@@ -58,16 +57,6 @@ def get_data():
         file.write(data_data.text)
     file.close()
 
-def run_org2org():
-    main(["ogr2ogr.py"
-        "-f", "PGDump",
-        "-t_srs", "EPSG:28992"
-        "-nln", "{dag_id}_{dag_id}_new",
-        "-lco", "GEOMETRY_NAME=geometry"
-        #     f"-oo DATE_AS_STRING=NO "
-        "-lco", "FID=id"
-        f"{tmp_dir}/{dag_id}.sql", data_file])
-
 
 with DAG(
     dag_id,
@@ -94,21 +83,16 @@ with DAG(
     # 4. Create SQL
     # ogr2ogr demands the PK is of type intgger. In this case the source ID is of type varchar.
     # So FID=ID cannot be used.
-    # create_SQL = BashOperator(
-    #     task_id=f"create_SQL_based_on_geojson",
-    #     bash_command=f"ogr2ogr -f 'PGDump' "
-    #     f"-t_srs EPSG:28992 "
-    #     f"-nln {dag_id}_{dag_id}_new "
-    #     f"{tmp_dir}/{dag_id}.sql {data_file} "
-    #     f"-lco GEOMETRY_NAME=geometry "
-    #     f"-oo DATE_AS_STRING=NO "
-    #     f"-lco FID=id",
-    # )
-
-    create_SQL = PythonOperator(
-        task_id="create_SQL_based_on_geojson",
-        python_callable=run_org2org)
-
+    create_SQL = BashOperator(
+        task_id=f"create_SQL_based_on_geojson",
+        bash_command=f"ogr2ogr -f 'PGDump' "
+        f"-t_srs EPSG:28992 "
+        f"-nln {dag_id}_{dag_id}_new "
+        f"{tmp_dir}/{dag_id}.sql {data_file} "
+        f"-lco GEOMETRY_NAME=geometry "
+        f"-oo DATE_AS_STRING=NO "
+        f"-lco FID=id",
+    )
 
     # 5. Create TABLE
     create_table = BashOperator(
