@@ -1,5 +1,10 @@
 import operator
 import requests
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 from airflow import DAG
 from airflow.models import Variable
