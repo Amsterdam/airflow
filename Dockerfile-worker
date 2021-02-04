@@ -32,7 +32,7 @@ RUN apt-get update \
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
-RUN /opt/bitnami/airflow/venv/bin/pip install --no-cache-dir -r $PIP_REQUIREMENTS
+RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $PIP_REQUIREMENTS
 
 EXPOSE 8080
 
