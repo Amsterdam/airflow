@@ -34,6 +34,8 @@ from sql.evenementen import SET_DATE_DATATYPE
 
 dag_id = "evenementen"
 
+POSTGRES_CONN_ID = "postgres_dso"
+
 variables_evenementen = Variable.get("evenementen", deserialize_json=True)
 data_endpoint = variables_evenementen["data_endpoint"]
 tmp_dir = f"/airflow_data/{dag_id}"
@@ -102,7 +104,7 @@ with DAG(
     # 5. Create TABLE
     create_table = BashOperator(
         task_id="create_table",
-        bash_command=f"psql {pg_params(conn_id='postgres_dso')} < {tmp_dir}/{dag_id}.sql",
+        bash_command=f"psql {pg_params(conn_id=POSTGRES_CONN_ID)} < {tmp_dir}/{dag_id}.sql",
     )
 
     set_datatype_date = PostgresOperator(
@@ -119,6 +121,7 @@ with DAG(
         postfix_table_name="_new",
         rename_indexes=False,
         pg_schema="public",
+        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
     # PREPARE CHECKS
@@ -143,7 +146,9 @@ with DAG(
 
     # 8. RUN bundled CHECKS
     multi_checks = PostgresMultiCheckOperator(
-        task_id="multi_check", checks=total_checks
+        task_id="multi_check", 
+        checks=total_checks, 
+        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
     # 9. Rename TABLE
@@ -151,6 +156,7 @@ with DAG(
         task_id="rename_table",
         old_table_name=f"{dag_id}_{dag_id}_new",
         new_table_name=f"{dag_id}_{dag_id}",
+        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
 
