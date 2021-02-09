@@ -102,10 +102,9 @@ with DAG(
     # 5. Create TABLE
     create_table = BashOperator(
         task_id="create_table",
-        bash_command=f"psql {pg_params()} < {tmp_dir}/{dag_id}.sql",
+        bash_command=f"psql {pg_params(conn_id='postgres_dso')} < {tmp_dir}/{dag_id}.sql",
     )
 
-    # 6. Set datatype date for date columns that where not detected by ogr2ogr
     set_datatype_date = PostgresOperator(
             task_id="set_datatype_date",
             sql=SET_DATE_DATATYPE,
