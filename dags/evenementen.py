@@ -71,13 +71,13 @@ with DAG(
 ) as dag:
 
     # 1. Post info message on slack
-    slack_at_start = MessageOperator(
-        task_id="slack_at_start",
-        http_conn_id="slack",
-        webhook_token=slack_webhook_token,
-        message=f"Starting {dag_id} ({DATAPUNT_ENVIRONMENT})",
-        username="admin",
-    )
+    # slack_at_start = MessageOperator(
+    #     task_id="slack_at_start",
+    #     http_conn_id="slack",
+    #     webhook_token=slack_webhook_token,
+    #     message=f"Starting {dag_id} ({DATAPUNT_ENVIRONMENT})",
+    #     username="admin",
+    # )
 
     # 2. Create temp directory to store files
     mkdir = BashOperator(task_id="mkdir", bash_command=f"mkdir -p {tmp_dir}")
@@ -155,8 +155,8 @@ with DAG(
 
 
 (
-    slack_at_start
-    >> mkdir
+    # slack_at_start
+    mkdir
     >> download_data
     >> create_SQL
     >> create_table
