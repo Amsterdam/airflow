@@ -108,9 +108,10 @@ with DAG(
     )
 
     set_datatype_date = PostgresOperator(
-            task_id="set_datatype_date",
-            sql=SET_DATE_DATATYPE,
-            params=dict(tablename=f"{dag_id}_{dag_id}_new"),
+        task_id="set_datatype_date",
+        sql=SET_DATE_DATATYPE,
+        params=dict(tablename=f"{dag_id}_{dag_id}_new"),
+        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
     # 7. Rename COLUMNS based on Provenance
