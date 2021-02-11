@@ -228,7 +228,6 @@ with DAG(
 (
     [trex_generate_pbf_wm, trex_generate_pbf_rd] 
     >> [upload_pbf_wm, upload_pbf_rd]
-    >> [mapproxy_generate_tiles_wm, mapproxy_generate_tiles_wm_zw, mapproxy_generate_tiles_wm_light,
-        mapproxy_generate_tiles_rd, mapproxy_generate_tiles_rd_zw, mapproxy_generate_tiles_rd_light]
+    >> [mapproxy_generate_tiles_wm, mapproxy_generate_tiles_wm_zw, mapproxy_generate_tiles_wm_light, mapproxy_generate_tiles_rd, mapproxy_generate_tiles_rd_zw, mapproxy_generate_tiles_rd_light]
     >> [upload_tiles_wm, upload_tiles_wm_zw, upload_tiles_wm_light]
 )
