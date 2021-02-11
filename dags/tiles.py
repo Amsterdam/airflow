@@ -49,7 +49,7 @@ volume_config_mapproxy = Volume(name='volume-cm', configs=volume_cm_mapproxy)
 volume_data = Volume(name='volume-data', configs=volume_data)
 
 with DAG(
-    dag_id='tiles_wm',
+    dag_id='tiles',
     schedule_interval=None,
     start_date=days_ago(2),
     tags=['tiles'],
@@ -226,7 +226,9 @@ with DAG(
     )
 
 (
-    trex_generate_pbf_wm >> upload_pbf_wm >> [mapproxy_generate_tiles_wm, mapproxy_generate_tiles_wm_zw, mapproxy_generate_tiles_wm_light] 
+    trex_generate_pbf_wm >> upload_pbf_wm >> mapproxy_generate_tiles_wm >> upload_tiles_wm
+    trex_generate_pbf_wm >> upload_pbf_wm >> mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
+    trex_generate_pbf_wm >> upload_pbf_wm >> mapproxy_generate_tiles_wm_light >> upload_tiles_wm_light 
     # trex_generate_pbf_rd >> upload_pbf_rd >> [mapproxy_generate_tiles_rd, mapproxy_generate_tiles_rd_zw, mapproxy_generate_tiles_rd_light]
     # >> [upload_tiles_wm, upload_tiles_wm_zw, upload_tiles_wm_light]
 )
