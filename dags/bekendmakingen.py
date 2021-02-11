@@ -1,16 +1,11 @@
 import operator
-import requests
-import logging
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.bash_operator import BashOperator
-from airflow.operators.python_operator import PythonOperator
 from airflow.operators.postgres_operator import PostgresOperator
+
+from http_fetch_operator import HttpFetchOperator
 
 from provenance_rename_operator import ProvenanceRenameOperator
 from postgres_rename_operator import PostgresTableRenameOperator
@@ -29,115 +24,97 @@ from postgres_check_operator import (
     GEO_CHECK,
 )
 
-from sql.evenementen import SET_DATE_DATATYPE
+from sql.bekendmakingen import CONVERT_TO_GEOM
 
-
-dag_id = "evenementen"
-
-POSTGRES_CONN_ID = "postgres_dso"
-
-variables_evenementen = Variable.get("evenementen", deserialize_json=True)
-data_endpoint = variables_evenementen["data_endpoint"]
+dag_id = "bekendmakingen"
+variables = Variable.get(dag_id, deserialize_json=True)
 tmp_dir = f"/airflow_data/{dag_id}"
-data_file = f"{tmp_dir}/evenementen.geojson"
 total_checks = []
 count_checks = []
 geo_checks = []
 
 # needed to put quotes on elements in geotypes for SQL_CHECK_GEO
-
-
 def quote(instr):
     return f"'{instr}'"
 
 
-# data connection
-def get_data():
-    """ calling the data endpoint """
-
-    # get data
-    data_url = f"{data_endpoint}"
-    data_data = requests.get(data_url)
-
-    # store data
-    with open(f"{data_file}", "w") as file:
-        file.write(data_data.text)
-    file.close()
-
-
 with DAG(
     dag_id,
+    description="bekendmakingen en kennisgevingen",
     default_args=default_args,
     template_searchpath=["/"],
     user_defined_filters=dict(quote=quote),
 ) as dag:
 
     # 1. Post info message on slack
-    # slack_at_start = MessageOperator(
-    #     task_id="slack_at_start",
-    #     http_conn_id="slack",
-    #     webhook_token=slack_webhook_token,
-    #     message=f"Starting {dag_id} ({DATAPUNT_ENVIRONMENT})",
-    #     username="admin",
-    # )
+    slack_at_start = MessageOperator(
+        task_id="slack_at_start",
+        http_conn_id="slack",
+        webhook_token=slack_webhook_token,
+        message=f"Starting {dag_id} ({DATAPUNT_ENVIRONMENT})",
+        username="admin",
+    )
 
     # 2. Create temp directory to store files
     mkdir = BashOperator(task_id="mkdir", bash_command=f"mkdir -p {tmp_dir}")
 
     # 3. Download data
-    download_data = PythonOperator(task_id="download_data", python_callable=get_data)
+    download_data = HttpFetchOperator(
+        task_id="wfs_fetch",
+        endpoint=variables["wfs_endpoint"],
+        http_conn_id="geozet_conn_id",
+        data=variables["wfs_params"],
+        output_type="text",
+        tmp_file=f"{tmp_dir}/{dag_id}.json",
+    )
 
     # 4. Create SQL
-    # ogr2ogr demands the PK is of type intgger. In this case the source ID is of type varchar.
-    # So FID=ID cannot be used.
-    create_SQL = BashOperator(
-        task_id=f"create_SQL_based_on_geojson",
+    JSON_to_SQL = BashOperator(
+        task_id="JSON_to_SQL",
         bash_command=f"ogr2ogr -f 'PGDump' "
         f"-t_srs EPSG:28992 "
         f"-nln {dag_id}_{dag_id}_new "
-        f"{tmp_dir}/{dag_id}.sql {data_file} "
+        f"{tmp_dir}/{dag_id}.sql {tmp_dir}/{dag_id}.json "
         f"-lco GEOMETRY_NAME=geometry "
-        f"-oo DATE_AS_STRING=NO "
         f"-lco FID=id",
     )
 
     # 5. Create TABLE
     create_table = BashOperator(
         task_id="create_table",
-        bash_command=f"psql {pg_params(conn_id=POSTGRES_CONN_ID)} < {tmp_dir}/{dag_id}.sql",
+        bash_command=f"psql {pg_params()} < {tmp_dir}/{dag_id}.sql",
     )
 
-    set_datatype_date = PostgresOperator(
-        task_id="set_datatype_date",
-        sql=SET_DATE_DATATYPE,
+    # 6. Convert BBOX (array of floats) to GEOM datatype
+    convert_to_geom = PostgresOperator(
+        task_id="convert_bbox_to_geom",
+        sql=CONVERT_TO_GEOM,
         params=dict(tablename=f"{dag_id}_{dag_id}_new"),
-        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
     # 7. Rename COLUMNS based on Provenance
     provenance_translation = ProvenanceRenameOperator(
         task_id="rename_columns",
-        dataset_name=dag_id,
+        dataset_name=f"{dag_id}",
         prefix_table_name=f"{dag_id}_",
         postfix_table_name="_new",
         rename_indexes=False,
         pg_schema="public",
-        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
     # PREPARE CHECKS
     count_checks.append(
         COUNT_CHECK.make_check(
             check_id=f"count_check",
-            pass_value=25,
-            params=dict(table_name=f"{dag_id}_{dag_id}_new"),
+            pass_value=50,
+            params=dict(table_name=f"{dag_id}_{dag_id}_new "),
             result_checker=operator.ge,
         )
     )
 
     geo_checks.append(
         GEO_CHECK.make_check(
-            check_id="geo_check",
+            check_id=f"geo_check",
             params=dict(table_name=f"{dag_id}_{dag_id}_new", geotype=["POINT"],),
             pass_value=1,
         )
@@ -147,27 +124,23 @@ with DAG(
 
     # 8. RUN bundled CHECKS
     multi_checks = PostgresMultiCheckOperator(
-        task_id="multi_check", 
-        checks=total_checks, 
-        postgres_conn_id=POSTGRES_CONN_ID,
+        task_id=f"multi_check", checks=total_checks
     )
 
     # 9. Rename TABLE
     rename_table = PostgresTableRenameOperator(
-        task_id="rename_table",
+        task_id=f"rename_table_{dag_id}",
         old_table_name=f"{dag_id}_{dag_id}_new",
         new_table_name=f"{dag_id}_{dag_id}",
-        postgres_conn_id=POSTGRES_CONN_ID,
     )
 
-
 (
-    # slack_at_start
-    mkdir
+    slack_at_start
+    >> mkdir
     >> download_data
-    >> create_SQL
+    >> JSON_to_SQL
     >> create_table
-    >> set_datatype_date
+    >> convert_to_geom
     >> provenance_translation
     >> multi_checks
     >> rename_table
@@ -175,7 +148,7 @@ with DAG(
 
 dag.doc_md = """
     #### DAG summery
-    This DAG containts data about leisure events (evenementen)
+    This DAG containts official announcements about licence applications (vergunningaanvragen e.d.)
     #### Mission Critical
     Classified as 2 (beschikbaarheid [range: 1,2,3])
     #### On Failure Actions
@@ -185,8 +158,8 @@ dag.doc_md = """
     #### Business Use Case / process / origin
     Na
     #### Prerequisites/Dependencies/Resourcing
-    https://api.data.amsterdam.nl/v1/docs/datasets/evenementen.html
-    https://api.data.amsterdam.nl/v1/docs/wfs-datasets/evenementen.html
+    https://api.data.amsterdam.nl/v1/docs/datasets/bekendmakingen.html
+    https://api.data.amsterdam.nl/v1/docs/wfs-datasets/bekendmakingen.html
     Example geosearch:
-    https://api.data.amsterdam.nl/geosearch?datasets=evenementen/evenementen&x=106434&y=488995&radius=10
+    https://api.data.amsterdam.nl/geosearch?datasets=bekendmakingen/bekendmakingen&x=111153&y=483288&radius=10
 """
