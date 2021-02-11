@@ -83,13 +83,13 @@ with DAG(
         do_xcom_push=False
     )
     upload_pbf_wm = KubernetesPodOperator(
-        name="upload_pbf",
+        name="upload_pbf_wm",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/pbf/ --recursive --content-encoding gzip"],
-        task_id="upload_pbf",
+        task_id="upload_pbf_wm",
         volumes=[volume_data],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
@@ -97,13 +97,13 @@ with DAG(
         do_xcom_push=False
     )
     upload_pbf_rd = KubernetesPodOperator(
-        name="upload_pbf",
+        name="upload_pbf_rd",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/pbf/ --recursive --content-encoding gzip"],
-        task_id="upload_pbf",
+        task_id="upload_pbf_rd",
         volumes=[volume_data],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
