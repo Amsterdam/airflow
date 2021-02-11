@@ -54,13 +54,13 @@ with DAG(
     start_date=days_ago(2),
     tags=['tiles'],
 ) as dag:
-    trex_generate_pbf = KubernetesPodOperator(
-        name="trex_generate_pbf",
+    trex_generate_pbf_wm = KubernetesPodOperator(
+        name="trex_generate_pbf_wm",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="sourcepole/t-rex",
         namespace="tiles",
         arguments=["generate", "--maxzoom", "16", "--config", "/var/config/topo_wm.toml"],
-        task_id="trex_generate_pbf",
+        task_id="trex_generate_pbf_wm",
         volumes=[volume_config_trex, volume_data],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
@@ -68,13 +68,27 @@ with DAG(
         get_logs=True,
         do_xcom_push=False
     )
-    upload_pbf = KubernetesPodOperator(
+    trex_generate_pbf_rd = KubernetesPodOperator(
+        name="trex_generate_pbf_rd",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="sourcepole/t-rex",
+        namespace="tiles",
+        arguments=["generate", "--maxzoom", "16", "--config", "/var/config/topo_rd.toml"],
+        task_id="trex_generate_pbf_rd",
+        volumes=[volume_config_trex, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_trex],
+        security_context=dict(fsGroup=33),
+        configmaps=trex_configmaps,
+        get_logs=True,
+        do_xcom_push=False
+    )
+    upload_pbf_wm = KubernetesPodOperator(
         name="upload_pbf",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
-        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/*' https://piosupportstor.blob.core.windows.net/tiles/pbf/ --recursive --content-encoding gzip"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/pbf/ --recursive --content-encoding gzip"],
         task_id="upload_pbf",
         volumes=[volume_data],
         volume_mounts=[volume_mount_data_trex],
@@ -82,26 +96,128 @@ with DAG(
         get_logs=True,
         do_xcom_push=False
     )
-    mapproxy_generate_tiles = KubernetesPodOperator(
-        name="mapproxy_generate_tiles",
+    upload_pbf_rd = KubernetesPodOperator(
+        name="upload_pbf",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="tiles",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/pbf/ --recursive --content-encoding gzip"],
+        task_id="upload_pbf",
+        volumes=[volume_data],
+        volume_mounts=[volume_mount_data_trex],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )    
+    mapproxy_generate_tiles_wm = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_wm",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
-        task_id="mapproxy_generate_tiles",
+        task_id="mapproxy_generate_tiles_wm",
         volumes=[volume_config_mapproxy, volume_data],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
         do_xcom_push=False
     )
-    upload_tiles = KubernetesPodOperator(
-        name="upload_tiles",
+    mapproxy_generate_tiles_wm_zw = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_wm_zw",
+        image="dsoapi.azurecr.io/mapproxy",
+        namespace="tiles",
+        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
+        task_id="mapproxy_generate_tiles_wm_zw",
+        volumes=[volume_config_mapproxy, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    mapproxy_generate_tiles_wm_light = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_wm_light",
+        image="dsoapi.azurecr.io/mapproxy",
+        namespace="tiles",
+        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
+        task_id="mapproxy_generate_tiles_wm",
+        volumes=[volume_config_mapproxy, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    mapproxy_generate_tiles_rd = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_rd",
+        image="dsoapi.azurecr.io/mapproxy",
+        namespace="tiles",
+        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk"],
+        task_id="mapproxy_generate_tiles_rd",
+        volumes=[volume_config_mapproxy, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    mapproxy_generate_tiles_rd_zw = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_rd_zw",
+        image="dsoapi.azurecr.io/mapproxy",
+        namespace="tiles",
+        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
+        task_id="mapproxy_generate_tiles_rd_zw",
+        volumes=[volume_config_mapproxy, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    mapproxy_generate_tiles_rd_light = KubernetesPodOperator(
+        name="mapproxy_generate_tiles_rd_light",
+        image="dsoapi.azurecr.io/mapproxy",
+        namespace="tiles",
+        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
+        task_id="mapproxy_generate_tiles_rd",
+        volumes=[volume_config_mapproxy, volume_data],
+        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    upload_tiles_wm = KubernetesPodOperator(
+        name="upload_tiles_wm",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
-        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/ --recursive"],
-        task_id="upload_tiles",
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/default/ --recursive"],
+        task_id="upload_tiles_wm",
+        volumes=[volume_data],
+        volume_mounts=[volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    upload_tiles_wm_zw = KubernetesPodOperator(
+        name="upload_tiles_wm_zw",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="tiles",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_zw_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/zw/ --recursive"],
+        task_id="upload_tiles_wm_zw",
+        volumes=[volume_data],
+        volume_mounts=[volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        get_logs=True,
+        do_xcom_push=False
+    )
+    upload_tiles_wm_light = KubernetesPodOperator(
+        name="upload_tiles_wm_light",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="tiles",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_light_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/light/ --recursive"],
+        task_id="upload_tiles_wm_light",
         volumes=[volume_data],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
@@ -110,8 +226,9 @@ with DAG(
     )
 
 (
-    trex_generate_pbf
-    >> upload_pbf
-    >> mapproxy_generate_tiles
-    >> upload_tiles
+    [trex_generate_pbf_wm, trex_generate_pbf_rd] 
+    >> [upload_pbf_wm, upload_pbf_rd]
+    >> [mapproxy_generate_tiles_wm, mapproxy_generate_tiles_wm_zw, mapproxy_generate_tiles_wm_light,
+        mapproxy_generate_tiles_rd, mapproxy_generate_tiles_rd_zw, mapproxy_generate_tiles_rd_light]
+    >> [upload_tiles_wm, upload_tiles_wm_zw, upload_tiles_wm_light]
 )

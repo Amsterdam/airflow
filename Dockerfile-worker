@@ -28,6 +28,7 @@ RUN apt-get update \
         libxml2 \
         libfreetype6 \
         libtiff5 \
+        jq \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
 USER 1001
