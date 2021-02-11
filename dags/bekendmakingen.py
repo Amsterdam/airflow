@@ -28,7 +28,7 @@ from sql.bekendmakingen import CONVERT_TO_GEOM
 
 dag_id = "bekendmakingen"
 variables = Variable.get(dag_id, deserialize_json=True)
-tmp_dir = f"/tmp/{dag_id}"
+tmp_dir = f"/airflow_data/{dag_id}"
 total_checks = []
 count_checks = []
 geo_checks = []
