@@ -8,12 +8,12 @@ from airflow.kubernetes.secret import Secret
 
 trex_configmaps = ['trex-env']
 
-volume_mount_data_trex = VolumeMount(name='volume-data',
+volume_mount_data_trex = VolumeMount(name='trex-volume-data',
                             mount_path='/var/cache/mvtcache',
                             sub_path=None,
                             read_only=False)
 
-volume_mount_data_mapproxy = VolumeMount(name='volume-data',
+volume_mount_data_mapproxy = VolumeMount(name='mapproxy-volume-data',
                             mount_path='/mnt/tiles',
                             sub_path=None,
                             read_only=False)
@@ -23,10 +23,17 @@ volume_mount_config = VolumeMount(name='volume-cm',
                             sub_path=None,
                             read_only=True)
 
-volume_data= {
+volume_dt_trex= {
     'persistentVolumeClaim':
       {
-        'claimName': 'tiles-volume-data'
+        'claimName': 'trex-volume-data'
+      }
+    }
+
+volume_dt_mapproxy= {
+    'persistentVolumeClaim':
+      {
+        'claimName': 'mapproxy-volume-data'
       }
     }
 
@@ -46,7 +53,8 @@ volume_cm_mapproxy= {
 
 volume_config_trex = Volume(name='volume-cm', configs=volume_cm_trex)
 volume_config_mapproxy = Volume(name='volume-cm', configs=volume_cm_mapproxy)
-volume_data = Volume(name='volume-data', configs=volume_data)
+volume_data_trex = Volume(name='trex-volume-data', configs=volume_dt_trex)
+volume_data_mapproxy = Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
 
 with DAG(
     dag_id='tiles',
@@ -61,7 +69,7 @@ with DAG(
         namespace="tiles",
         arguments=["generate", "--maxzoom", "16", "--config", "/var/config/topo_wm.toml"],
         task_id="trex_generate_pbf_wm",
-        volumes=[volume_config_trex, volume_data],
+        volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
         configmaps=trex_configmaps,
@@ -75,7 +83,7 @@ with DAG(
         namespace="tiles",
         arguments=["generate", "--maxzoom", "16", "--config", "/var/config/topo_rd.toml"],
         task_id="trex_generate_pbf_rd",
-        volumes=[volume_config_trex, volume_data],
+        volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
         configmaps=trex_configmaps,
@@ -90,7 +98,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/pbf/ --recursive --content-encoding gzip"],
         task_id="upload_pbf_wm",
-        volumes=[volume_data],
+        volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -104,7 +112,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/pbf/ --recursive --content-encoding gzip"],
         task_id="upload_pbf_rd",
-        volumes=[volume_data],
+        volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -116,7 +124,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
         task_id="mapproxy_generate_tiles_wm",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -128,7 +136,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
         task_id="mapproxy_generate_tiles_wm_zw",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -140,7 +148,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
         task_id="mapproxy_generate_tiles_wm_light",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -152,7 +160,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk"],
         task_id="mapproxy_generate_tiles_rd",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -164,7 +172,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
         task_id="mapproxy_generate_tiles_rd_zw",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -176,7 +184,7 @@ with DAG(
         namespace="tiles",
         arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
         task_id="mapproxy_generate_tiles_rd_light",
-        volumes=[volume_config_mapproxy, volume_data],
+        volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -190,7 +198,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/default/ --recursive"],
         task_id="upload_tiles_wm",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -204,7 +212,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_zw_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/zw/ --recursive"],
         task_id="upload_tiles_wm_zw",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -218,7 +226,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_light_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/light/ --recursive"],
         task_id="upload_tiles_wm_light",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -232,7 +240,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_rd_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/rd/default/ --recursive"],
         task_id="upload_tiles_rd",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -246,7 +254,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_rd_seed_zw_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/rd/zw/ --recursive"],
         task_id="upload_tiles_rd_zw",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
@@ -260,7 +268,7 @@ with DAG(
         cmds=["/bin/bash"],
         arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_rd_seed_light_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/rd/light/ --recursive"],
         task_id="upload_tiles_rd_light",
-        volumes=[volume_data],
+        volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         get_logs=True,
