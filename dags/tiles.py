@@ -81,7 +81,7 @@ with DAG(
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="sourcepole/t-rex",
         namespace="tiles",
-        arguments=["generate", "--maxzoom", "16", "--config", "/var/config/topo_rd.toml"],
+        arguments=["generate", "--maxzoom", "11", "--config", "/var/config/topo_rd.toml"],
         task_id="trex_generate_pbf_rd",
         volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
