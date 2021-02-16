@@ -130,30 +130,30 @@ with DAG(
         get_logs=True,
         do_xcom_push=False
     )
-    mapproxy_generate_tiles_wm_zw = KubernetesPodOperator(
-        name="mapproxy_generate_tiles_wm_zw",
-        image="dsoapi.azurecr.io/mapproxy",
-        namespace="tiles",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
-        task_id="mapproxy_generate_tiles_wm_zw",
-        volumes=[volume_config_mapproxy, volume_data_mapproxy],
-        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
-        security_context=dict(fsGroup=101),
-        get_logs=True,
-        do_xcom_push=False
-    )
-    mapproxy_generate_tiles_wm_light = KubernetesPodOperator(
-        name="mapproxy_generate_tiles_wm_light",
-        image="dsoapi.azurecr.io/mapproxy",
-        namespace="tiles",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
-        task_id="mapproxy_generate_tiles_wm_light",
-        volumes=[volume_config_mapproxy, volume_data_mapproxy],
-        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
-        security_context=dict(fsGroup=101),
-        get_logs=True,
-        do_xcom_push=False
-    )
+    # mapproxy_generate_tiles_wm_zw = KubernetesPodOperator(
+    #     name="mapproxy_generate_tiles_wm_zw",
+    #     image="dsoapi.azurecr.io/mapproxy",
+    #     namespace="tiles",
+    #     arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
+    #     task_id="mapproxy_generate_tiles_wm_zw",
+    #     volumes=[volume_config_mapproxy, volume_data_mapproxy],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+    #     security_context=dict(fsGroup=101),
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
+    # mapproxy_generate_tiles_wm_light = KubernetesPodOperator(
+    #     name="mapproxy_generate_tiles_wm_light",
+    #     image="dsoapi.azurecr.io/mapproxy",
+    #     namespace="tiles",
+    #     arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
+    #     task_id="mapproxy_generate_tiles_wm_light",
+    #     volumes=[volume_config_mapproxy, volume_data_mapproxy],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
+    #     security_context=dict(fsGroup=101),
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
     # mapproxy_generate_tiles_rd = KubernetesPodOperator(
     #     name="mapproxy_generate_tiles_rd",
     #     image="dsoapi.azurecr.io/mapproxy",
@@ -276,8 +276,8 @@ with DAG(
     # )
 
 mapproxy_generate_tiles_wm >> upload_tiles_wm
-mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
-mapproxy_generate_tiles_wm_light >> upload_tiles_wm_light 
+# mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
+# mapproxy_generate_tiles_wm_light >> upload_tiles_wm_light 
 # trex_generate_pbf_wm >> upload_pbf_wm
 # upload_pbf_wm >> mapproxy_generate_tiles_wm >> upload_tiles_wm
 # upload_pbf_wm >> mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
