@@ -127,6 +127,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
+        node_selectors=dict(nodetype=tiles),
         get_logs=True,
         do_xcom_push=False
     )
@@ -190,20 +191,21 @@ with DAG(
     #     get_logs=True,
     #     do_xcom_push=False
     # )
-    # upload_tiles_wm = KubernetesPodOperator(
-    #     name="upload_tiles_wm",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="hawaku/azcopy",
-    #     namespace="tiles",
-    #     cmds=["/bin/bash"],
-    #     arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/default/ --recursive"],
-    #     task_id="upload_tiles_wm",
-    #     volumes=[volume_data_mapproxy],
-    #     volume_mounts=[volume_mount_data_mapproxy],
-    #     security_context=dict(fsGroup=101),
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )
+    upload_tiles_wm = KubernetesPodOperator(
+        name="upload_tiles_wm",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="tiles",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/mnt/tiles/cache_wm_seed_EPSG3857/*' https://piosupportstor.blob.core.windows.net/tiles/wm/default/ --recursive"],
+        task_id="upload_tiles_wm",
+        volumes=[volume_data_mapproxy],
+        volume_mounts=[volume_mount_data_mapproxy],
+        security_context=dict(fsGroup=101),
+        node_selectors=dict(nodetype=tiles),
+        get_logs=True,
+        do_xcom_push=False
+    )
     # upload_tiles_wm_zw = KubernetesPodOperator(
     #     name="upload_tiles_wm_zw",
     #     labels={"aadpodidbinding": "pio-tiles-id"},
