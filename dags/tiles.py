@@ -56,29 +56,6 @@ volume_config_mapproxy = Volume(name='volume-cm', configs=volume_cm_mapproxy)
 volume_data_trex = Volume(name='trex-volume-data', configs=volume_dt_trex)
 volume_data_mapproxy = Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
 
-resources = {
-    'limits': {
-        [
-            {
-                'cpu': '3000m',
-            },
-            {
-                'memory': '12Gi',
-            }
-        ],
-    },
-    'requests': {
-        [
-            {
-                'cpu': '2500m',
-            },
-            {
-                'memory': '6Gi',
-            }
-        ],
-    },
-}
-
 with DAG(
     dag_id='tiles',
     schedule_interval=None,
@@ -152,7 +129,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=True,
-        resources=resources,
+        resources={'request_memory': '6Gi', 'request_cpu': '2500m', 'limit_memory': '12Gi', 'limit_cpu': '3000m'},
         get_logs=True,
         do_xcom_push=False
     )
