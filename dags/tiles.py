@@ -56,6 +56,29 @@ volume_config_mapproxy = Volume(name='volume-cm', configs=volume_cm_mapproxy)
 volume_data_trex = Volume(name='trex-volume-data', configs=volume_dt_trex)
 volume_data_mapproxy = Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
 
+resources = {
+    'limits': {
+        [
+            {
+                'cpu': '3000m',
+            },
+            {
+                'memory': '12Gi',
+            }
+        ],
+    },
+    'requests': {
+        [
+            {
+                'cpu': '2500m',
+            },
+            {
+                'memory': '6Gi',
+            }
+        ],
+    },
+}
+
 with DAG(
     dag_id='tiles',
     schedule_interval=None,
@@ -122,12 +145,14 @@ with DAG(
         name="mapproxy_generate_tiles_wm",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="tiles",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
+        arguments=["mapproxy-seed", "-c", "4", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
         task_id="mapproxy_generate_tiles_wm",
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         node_selectors={"nodetype": "tiles"},
+        is_delete_operator_pod=True,
+        resources=resources,
         get_logs=True,
         do_xcom_push=False
     )
@@ -203,6 +228,7 @@ with DAG(
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
         node_selectors={"nodetype": "tiles"},
+        is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
     )
