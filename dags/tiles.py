@@ -127,7 +127,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors=dict(nodetype=tiles),
+        # node_selectors=dict(nodetype=tiles),
         get_logs=True,
         do_xcom_push=False
     )
@@ -202,7 +202,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors=dict(nodetype=tiles),
+        # node_selectors=dict(nodetype=tiles),
         get_logs=True,
         do_xcom_push=False
     )
