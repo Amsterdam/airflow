@@ -77,12 +77,12 @@ with DAG(
         configmaps=trex_configmaps,
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=False,
-        resources=fullresources,
+        startup_timeout_seconds=300,
         get_logs=True,
         do_xcom_push=False
     )
     trex_generate_pbf_rd = KubernetesPodOperator(
-        name="trex_generate_pbf_rd",    
+        name="trex_generate_pbf_rd",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="sourcepole/t-rex",
         namespace="tiles",
@@ -94,7 +94,7 @@ with DAG(
         configmaps=trex_configmaps,
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=False,
-        resources=fullresources,
+        startup_timeout_seconds=300,
         get_logs=True,
         do_xcom_push=False
     )
@@ -139,6 +139,7 @@ with DAG(
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
+        startup_timeout_seconds=300,
         get_logs=True,
         do_xcom_push=False
     )
@@ -146,7 +147,7 @@ with DAG(
         name="mapproxy_generate_tiles_wm_zw",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="tiles",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
+        arguments=["mapproxy-seed", "-c", "4", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_zw"],
         task_id="mapproxy_generate_tiles_wm_zw",
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
@@ -154,6 +155,7 @@ with DAG(
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
+        startup_timeout_seconds=300,
         get_logs=True,
         do_xcom_push=False
     )
@@ -161,7 +163,7 @@ with DAG(
         name="mapproxy_generate_tiles_wm_light",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="tiles",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
+        arguments=["mapproxy-seed", "-c", "4", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk_light"],
         task_id="mapproxy_generate_tiles_wm_light",
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
@@ -169,6 +171,7 @@ with DAG(
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
+        startup_timeout_seconds=300,
         get_logs=True,
         do_xcom_push=False
     )
