@@ -18,7 +18,7 @@ apache-airflow-providers-postgres==1.0.1
     # via apache-airflow
 apache-airflow-providers-sqlite==1.0.1
     # via apache-airflow
-apache-airflow[crypto,postgres,sentry]==2.0.0
+apache-airflow[crypto,postgres,sentry]==2.0.1
     # via
     #   -r requirements.in
     #   apache-airflow-providers-postgres

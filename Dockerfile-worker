@@ -7,6 +7,8 @@ RUN apt-get update \
  && apt-get autoremove -y \
  && apt-get install --no-install-recommends -y \
         unzip \
+        gcc \
+        libc-dev \
         wget \
         dnsutils \
         vim-tiny \
