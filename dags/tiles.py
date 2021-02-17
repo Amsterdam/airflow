@@ -5,12 +5,16 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 from kubernetes.client import models as k8s
 from airflow.kubernetes.secret import Secret
 
+### Configmap Trex
+
 configmap ="trex-env"
 env_from = [k8s.V1EnvFromSource(
                 config_map_ref=k8s.V1ConfigMapEnvSource(
                     name=configmap
                 )
             )]
+
+### Volume mounts
 
 volume_mount_data_trex = k8s.V1VolumeMount(
     name='trex-volume-data', mount_path='/var/cache/mvtcache', sub_path=None, read_only=False)
@@ -21,6 +25,7 @@ volume_mount_data_mapproxy = k8s.V1VolumeMount(
 volume_mount_config = k8s.V1VolumeMount(
     name='volume-cm', mount_path='/var/config', sub_path=None, read_only=True)
 
+### Volume claims
 
 volume_data_trex = k8s.V1Volume(
     name='trex-volume-data',
@@ -32,16 +37,17 @@ volume_data_mapproxy = k8s.V1Volume(
     persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='mapproxy-volume-data'),
 )
 
-volume_cm_trex = k8s.V1Volume(
+volume_config_trex = k8s.V1Volume(
     name='volume-cm',
     config_map=k8s.V1ConfigMapVolumeSource(name='trex-config'),
 )
 
-volume_cm_mapproxy = k8s.V1Volume(
+volume_config_mapproxy = k8s.V1Volume(
     name='volume-cm',
     config_map=k8s.V1ConfigMapVolumeSource(name='mapproxy-config'),
 )
 
+### Pods resource config
 
 fullresources=k8s.V1ResourceRequirements(
     requests={
@@ -54,6 +60,7 @@ fullresources=k8s.V1ResourceRequirements(
     }
 )
 
+### DAG Start
 with DAG(
     dag_id='tiles',
     schedule_interval=None,
@@ -100,7 +107,7 @@ with DAG(
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
-        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/pbf/ --recursive --content-encoding gzip"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/pbf/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
         task_id="upload_pbf_wm",
         volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
@@ -117,7 +124,7 @@ with DAG(
         image="hawaku/azcopy",
         namespace="tiles",
         cmds=["/bin/bash"],
-        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/pbf/ --recursive --content-encoding gzip"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/pbf/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
         task_id="upload_pbf_rd",
         volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
