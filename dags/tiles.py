@@ -2,23 +2,27 @@ import airflow
 from airflow.utils.dates import days_ago
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.kubernetes.volume import Volume
-from airflow.kubernetes.volume_mount import VolumeMount
+from kubernetes.client import models as k8s
 from airflow.kubernetes.secret import Secret
 
-trex_configmaps = ['trex-env']
+configmap ="trex-env"
+env_from = [k8s.V1EnvFromSource(
+                config_map_ref=k8s.V1ConfigMapEnvSource(
+                    name=configmap
+                )
+            )]
 
-volume_mount_data_trex = VolumeMount(name='trex-volume-data',
+volume_mount_data_trex = k8s.V1VolumeMount(name='trex-volume-data',
                             mount_path='/var/cache/mvtcache',
                             sub_path=None,
                             read_only=False)
 
-volume_mount_data_mapproxy = VolumeMount(name='mapproxy-volume-data',
+volume_mount_data_mapproxy = k8s.V1VolumeMount(name='mapproxy-volume-data',
                             mount_path='/mnt/tiles',
                             sub_path=None,
                             read_only=False)
 
-volume_mount_config = VolumeMount(name='volume-cm',
+volume_mount_config = k8s.V1VolumeMount(name='volume-cm',
                             mount_path='/var/config',
                             sub_path=None,
                             read_only=True)
@@ -51,12 +55,21 @@ volume_cm_mapproxy= {
       }
     }
 
-volume_config_trex = Volume(name='volume-cm', configs=volume_cm_trex)
-volume_config_mapproxy = Volume(name='volume-cm', configs=volume_cm_mapproxy)
-volume_data_trex = Volume(name='trex-volume-data', configs=volume_dt_trex)
-volume_data_mapproxy = Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
+volume_config_trex = k8s.V1Volume(name='volume-cm', configs=volume_cm_trex)
+volume_config_mapproxy = k8s.V1Volume(name='volume-cm', configs=volume_cm_mapproxy)
+volume_data_trex = k8s.V1Volume(name='trex-volume-data', configs=volume_dt_trex)
+volume_data_mapproxy = k8s.V1Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
 
-fullresources = {'request_memory': '6Gi', 'request_cpu': '2500m', 'limit_memory': '12Gi', 'limit_cpu': '3000m'}
+fullresources=k8s.V1ResourceRequirements(
+    requests={
+        'memory': '6Gi',
+        'cpu': '2500m',
+    },
+    limits={
+        'memory': '12Gi',
+        'cpu': '3000m',
+    }
+)
 
 with DAG(
     dag_id='tiles',
@@ -74,7 +87,7 @@ with DAG(
         volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
-        configmaps=trex_configmaps,
+        env_from=env_from,
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=False,
         startup_timeout_seconds=300,
@@ -91,7 +104,7 @@ with DAG(
         volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
-        configmaps=trex_configmaps,
+        env_from=env_from,
         node_selectors={"nodetype": "tiles"},
         is_delete_operator_pod=False,
         startup_timeout_seconds=300,
