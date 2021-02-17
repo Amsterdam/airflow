@@ -12,53 +12,36 @@ env_from = [k8s.V1EnvFromSource(
                 )
             )]
 
-volume_mount_data_trex = k8s.V1VolumeMount(name='trex-volume-data',
-                            mount_path='/var/cache/mvtcache',
-                            sub_path=None,
-                            read_only=False)
+volume_mount_data_trex = k8s.V1VolumeMount(
+    name='trex-volume-data', mount_path='/var/cache/mvtcache', sub_path=None, read_only=False)
 
-volume_mount_data_mapproxy = k8s.V1VolumeMount(name='mapproxy-volume-data',
-                            mount_path='/mnt/tiles',
-                            sub_path=None,
-                            read_only=False)
+volume_mount_data_mapproxy = k8s.V1VolumeMount(
+    name='mapproxy-volume-data', mount_path='/mnt/tiles', sub_path=None, read_only=False)
 
-volume_mount_config = k8s.V1VolumeMount(name='volume-cm',
-                            mount_path='/var/config',
-                            sub_path=None,
-                            read_only=True)
+volume_mount_config = k8s.V1VolumeMount(
+    name='volume-cm', mount_path='/var/config', sub_path=None, read_only=True)
 
-volume_dt_trex= {
-    'persistentVolumeClaim':
-      {
-        'claimName': 'trex-volume-data'
-      }
-    }
 
-volume_dt_mapproxy= {
-    'persistentVolumeClaim':
-      {
-        'claimName': 'mapproxy-volume-data'
-      }
-    }
+volume_data_trex = k8s.V1Volume(
+    name='trex-volume-data',
+    persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='trex-volume-data'),
+)
 
-volume_cm_trex= {
-    'configMap':
-      {
-        'name': 'trex-config'
-      }
-    }
+volume_data_mapproxy = k8s.V1Volume(
+    name='test-volume',
+    persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='mapproxy-volume-data'),
+)
 
-volume_cm_mapproxy= {
-    'configMap':
-      {
-        'name': 'mapproxy-config'
-      }
-    }
+volume_cm_trex = k8s.V1Volume(
+    name='volume-cm',
+    config_map=k8s.V1ConfigMapVolumeSource(name='trex-config'),
+)
 
-volume_config_trex = k8s.V1Volume(name='volume-cm', configs=volume_cm_trex)
-volume_config_mapproxy = k8s.V1Volume(name='volume-cm', configs=volume_cm_mapproxy)
-volume_data_trex = k8s.V1Volume(name='trex-volume-data', configs=volume_dt_trex)
-volume_data_mapproxy = k8s.V1Volume(name='mapproxy-volume-data', configs=volume_dt_mapproxy)
+volume_cm_mapproxy = k8s.V1Volume(
+    name='volume-cm',
+    config_map=k8s.V1ConfigMapVolumeSource(name='mapproxy-config'),
+)
+
 
 fullresources=k8s.V1ResourceRequirements(
     requests={
