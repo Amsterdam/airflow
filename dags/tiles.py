@@ -1,7 +1,7 @@
 import airflow
 from airflow.utils.dates import days_ago
 from airflow import DAG
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from kubernetes.client import models as k8s
 from airflow.kubernetes.secret import Secret
 
@@ -33,7 +33,7 @@ volume_data_trex = k8s.V1Volume(
 )
 
 volume_data_mapproxy = k8s.V1Volume(
-    name='test-volume',
+    name='mapproxy-volume-data',
     persistent_volume_claim=k8s.V1PersistentVolumeClaimVolumeSource(claim_name='mapproxy-volume-data'),
 )
 
@@ -78,7 +78,7 @@ with DAG(
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
         env_from=env_from,
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=False,
         startup_timeout_seconds=300,
         get_logs=True,
@@ -95,7 +95,7 @@ with DAG(
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
         security_context=dict(fsGroup=33),
         env_from=env_from,
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=False,
         startup_timeout_seconds=300,
         get_logs=True,
@@ -112,7 +112,7 @@ with DAG(
         volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         startup_timeout_seconds=300,
         get_logs=True,
@@ -129,7 +129,7 @@ with DAG(
         volumes=[volume_data_trex],
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         startup_timeout_seconds=300,
         get_logs=True,
@@ -144,7 +144,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -160,7 +160,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -176,7 +176,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -192,7 +192,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -208,7 +208,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -224,7 +224,7 @@ with DAG(
         volumes=[volume_config_mapproxy, volume_data_mapproxy],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
         startup_timeout_seconds=300,
@@ -242,7 +242,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
@@ -258,7 +258,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
@@ -274,7 +274,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
@@ -290,7 +290,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
@@ -306,7 +306,7 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
@@ -322,17 +322,17 @@ with DAG(
         volumes=[volume_data_mapproxy],
         volume_mounts=[volume_mount_data_mapproxy],
         security_context=dict(fsGroup=101),
-        node_selectors={"nodetype": "tiles"},
+        node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         get_logs=True,
         do_xcom_push=False
     )
 
 trex_generate_pbf_wm >> upload_pbf_wm
+trex_generate_pbf_rd >> upload_pbf_rd
 upload_pbf_wm >> mapproxy_generate_tiles_wm >> upload_tiles_wm
 upload_pbf_wm >> mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
 upload_pbf_wm >> mapproxy_generate_tiles_wm_light >> upload_tiles_wm_light 
-trex_generate_pbf_rd >> upload_pbf_rd
 upload_pbf_rd >> mapproxy_generate_tiles_rd >> upload_tiles_rd 
 upload_pbf_rd >> mapproxy_generate_tiles_rd_zw >> upload_tiles_rd_zw
 upload_pbf_rd >> mapproxy_generate_tiles_rd_light >> upload_tiles_rd_light
