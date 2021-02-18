@@ -109,7 +109,7 @@ with DAG(
     #     env_from=env_from,
     #     node_selector={"nodetype": "tiles"},
     #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=300,
+    #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
     # )
@@ -126,7 +126,7 @@ with DAG(
     #     env_from=env_from,
     #     node_selector={"nodetype": "tiles"},
     #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=300,
+    #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
     # )
@@ -143,7 +143,7 @@ with DAG(
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
     #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=300,
+    #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
     # )
@@ -160,7 +160,7 @@ with DAG(
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
     #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=300,
+    #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
     # )    
@@ -176,7 +176,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -192,7 +192,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -208,7 +208,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -224,7 +224,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -240,7 +240,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -256,7 +256,7 @@ with DAG(
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
         resources=fullresources,
-        startup_timeout_seconds=300,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -273,6 +273,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -289,6 +290,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -305,6 +307,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -321,6 +324,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -337,6 +341,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
@@ -353,6 +358,7 @@ with DAG(
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
         is_delete_operator_pod=True,
+        startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
     )
