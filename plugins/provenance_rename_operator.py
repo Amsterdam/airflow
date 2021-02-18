@@ -40,7 +40,7 @@ class ProvenanceRenameOperator(BaseOperator):
     def _get_existing_tables(self, pg_hook, tables, pg_schema="public"):
         if not tables:
             return []
-        table_lookup = {}
+        table_lookup = dict()
         for table in tables:
             real_tablename = table.get(
                 "provenance",
@@ -55,6 +55,8 @@ class ProvenanceRenameOperator(BaseOperator):
                 WHERE schemaname = '{pg_schema}' AND tablename IN ({snaked_tablenames_str})
             """
         )
+        print(row)
+        print(table_lookup)
 
         return {row["tablename"]: table_lookup[row["tablename"]] for row in rows}
 
