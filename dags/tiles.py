@@ -102,11 +102,15 @@ with DAG(
         image="sourcepole/t-rex",
         namespace="tiles",
         cmds=["/bin/bash"],
-        arguments=["-c", 
-            "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "0", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml", "&", 
-            "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "1", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml", "&",
-            "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "2", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml" 
-            ],
+        arguments=["-c", \
+            "/usr/bin/t_rex generate --overwrite true --minzoom 10 --maxzoom 16 --progress false --nodes 3 --nodeno 0 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml & \
+            /usr/bin/t_rex generate --overwrite true --minzoom 10 --maxzoom 16 --progress false --nodes 3 --nodeno 1 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml & \
+            /usr/bin/t_rex generate --overwrite true --minzoom 10 --maxzoom 16 --progress false --nodes 3 --nodeno 2 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml"],
+        # arguments=["-c", 
+        #     "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "0", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml", "&", 
+        #     "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "1", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml", "&",
+        #     "/usr/bin/t_rex", "generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--nodes", "3", "--nodeno", "2", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml" 
+        #     ],
         task_id="trex_generate_vector_wm",
         volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
