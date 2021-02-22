@@ -96,24 +96,24 @@ with DAG(
     schedule_interval=None,
     start_date=days_ago(2),
 ) as dag:
-    trex_generate_vector_wm = KubernetesPodOperator(
-        name="trex_generate_vector_wm",
-        labels={"aadpodidbinding": "pio-tiles-id"},
-        image="sourcepole/t-rex",
-        namespace="tiles",
-        arguments=["generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml"],
-        task_id="trex_generate_vector_wm",
-        volumes=[volume_config_trex, volume_data_trex],
-        volume_mounts=[volume_mount_config, volume_mount_data_trex],
-        security_context=dict(fsGroup=33),
-        env_from=env_from,
-        node_selector={"nodetype": "tiles"},
-        is_delete_operator_pod=True,
-        startup_timeout_seconds=600,
-        resources=fullresources,
-        get_logs=True,
-        do_xcom_push=False
-    )
+    # trex_generate_vector_wm = KubernetesPodOperator(
+    #     name="trex_generate_vector_wm",
+    #     labels={"aadpodidbinding": "pio-tiles-id"},
+    #     image="sourcepole/t-rex",
+    #     namespace="tiles",
+    #     arguments=["generate", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--progress", "false", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml"],
+    #     task_id="trex_generate_vector_wm",
+    #     volumes=[volume_config_trex, volume_data_trex],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_trex],
+    #     security_context=dict(fsGroup=33),
+    #     env_from=env_from,
+    #     node_selector={"nodetype": "tiles"},
+    #     is_delete_operator_pod=True,
+    #     startup_timeout_seconds=600,
+    #     resources=fullresources,
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
     # trex_generate_vector_rd = KubernetesPodOperator(
     #     name="trex_generate_vector_rd",
     #     labels={"aadpodidbinding": "pio-tiles-id"},
@@ -365,7 +365,7 @@ with DAG(
     #     do_xcom_push=False
     # )
 
-trex_generate_vector_wm >> upload_vector_wm
+upload_vector_wm
 # trex_generate_vector_wm >> upload_vector_wm
 # trex_generate_vector_wm >> upload_vector_wm
 # trex_generate_vector_rd >> upload_vector_rd
