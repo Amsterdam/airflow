@@ -96,24 +96,24 @@ with DAG(
     schedule_interval=None,
     start_date=days_ago(2),
 ) as dag:
-    # trex_generate_vector_wm = KubernetesPodOperator(
-    #     name="trex_generate_vector_wm",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="sourcepole/t-rex",
-    #     namespace="tiles",
-    #     arguments=["generate", "--progress", "false", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml"],
-    #     task_id="trex_generate_vector_wm",
-    #     volumes=[volume_config_trex, volume_data_trex],
-    #     volume_mounts=[volume_mount_config, volume_mount_data_trex],
-    #     security_context=dict(fsGroup=33),
-    #     env_from=env_from,
-    #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=600,
-    #     resources=fullresources,
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )
+    trex_generate_vector_wm = KubernetesPodOperator(
+        name="trex_generate_vector_wm",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="sourcepole/t-rex",
+        namespace="tiles",
+        arguments=["generate", "--progress", "false", "--overwrite", "true", "--minzoom", "10", "--maxzoom", "16", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_wm.toml"],
+        task_id="trex_generate_vector_wm",
+        volumes=[volume_config_trex, volume_data_trex],
+        volume_mounts=[volume_mount_config, volume_mount_data_trex],
+        security_context=dict(fsGroup=33),
+        env_from=env_from,
+        node_selector={"nodetype": "tiles"},
+        is_delete_operator_pod=False,
+        startup_timeout_seconds=600,
+        resources=fullresources,
+        get_logs=True,
+        do_xcom_push=False
+    )
     trex_generate_vector_rd = KubernetesPodOperator(
         name="trex_generate_vector_rd",
         labels={"aadpodidbinding": "pio-tiles-id"},
@@ -126,29 +126,29 @@ with DAG(
         security_context=dict(fsGroup=33),
         env_from=env_from,
         node_selector={"nodetype": "tiles"},
-        is_delete_operator_pod=True,
+        is_delete_operator_pod=False,
         startup_timeout_seconds=600,
         resources=fullresources,
         get_logs=True,
         do_xcom_push=False
     )
-    # upload_vector_wm = KubernetesPodOperator(
-    #     name="upload_vector_wm",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="hawaku/azcopy",
-    #     namespace="tiles",
-    #     cmds=["/bin/bash"],
-    #     arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; sleep 4m; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
-    #     task_id="upload_vector_wm",
-    #     volumes=[volume_data_trex],
-    #     volume_mounts=[volume_mount_data_trex],
-    #     security_context=dict(fsGroup=101),
-    #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
-    #     startup_timeout_seconds=600,
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )
+    upload_vector_wm = KubernetesPodOperator(
+        name="upload_vector_wm",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="tiles",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; sleep 4m; azcopy copy '/var/cache/mvtcache/wm/*' https://piosupportstor.blob.core.windows.net/tiles/wm/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
+        task_id="upload_vector_wm",
+        volumes=[volume_data_trex],
+        volume_mounts=[volume_mount_data_trex],
+        security_context=dict(fsGroup=101),
+        node_selector={"nodetype": "tiles"},
+        is_delete_operator_pod=False,
+        startup_timeout_seconds=600,
+        get_logs=True,
+        do_xcom_push=False
+    )
     upload_vector_rd = KubernetesPodOperator(
         name="upload_vector_rd",
         labels={"aadpodidbinding": "pio-tiles-id"},
@@ -161,7 +161,7 @@ with DAG(
         volume_mounts=[volume_mount_data_trex],
         security_context=dict(fsGroup=101),
         node_selector={"nodetype": "tiles"},
-        is_delete_operator_pod=True,
+        is_delete_operator_pod=False,
         startup_timeout_seconds=600,
         get_logs=True,
         do_xcom_push=False
@@ -176,7 +176,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_wm],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -192,7 +192,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_wm_zw],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -208,7 +208,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_wm_light],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -224,7 +224,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -240,7 +240,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_zw],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -256,7 +256,7 @@ with DAG(
     #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_light],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     resources=fullresources,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
@@ -274,7 +274,7 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_wm],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
@@ -291,7 +291,7 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_wm_zw],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
@@ -308,7 +308,7 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_wm_light],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
@@ -325,7 +325,7 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_rd],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
@@ -342,7 +342,7 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_rd_zw],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
@@ -359,13 +359,13 @@ with DAG(
     #     volume_mounts=[volume_mount_data_mapproxy_rd_light],
     #     security_context=dict(fsGroup=101),
     #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=True,
+    #     is_delete_operator_pod=False,
     #     startup_timeout_seconds=600,
     #     get_logs=True,
     #     do_xcom_push=False
     # )
 
-# trex_generate_vector_wm >> upload_vector_wm
+trex_generate_vector_wm >> upload_vector_wm
 trex_generate_vector_rd >> upload_vector_rd
 # upload_vector_wm >> mapproxy_generate_tiles_wm >> upload_tiles_wm
 # upload_vector_wm >> mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
