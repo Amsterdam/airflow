@@ -55,8 +55,6 @@ class ProvenanceRenameOperator(BaseOperator):
                 WHERE schemaname = '{pg_schema}' AND tablename IN ({snaked_tablenames_str})
             """
         )
-        print(row)
-        print(table_lookup)
 
         return {row["tablename"]: table_lookup[row["tablename"]] for row in rows}
 
