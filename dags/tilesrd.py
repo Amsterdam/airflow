@@ -129,38 +129,38 @@ with DAG(
         get_logs=True,
         do_xcom_push=False
     )
-    mapproxy_generate_tiles_rd_zw = KubernetesPodOperator(
-        name="mapproxy_generate_tiles_rd_zw",
-        image="dsoapi.azurecr.io/mapproxy",
-        namespace="airflow",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
-        task_id="mapproxy_generate_tiles_rd_zw",
-        volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_zw],
-        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_zw],
-        security_context=dict(fsGroup=101),
-        node_selector={"nodetype": "tiles"},
-        is_delete_operator_pod=False,
-        resources=fullresources,
-        startup_timeout_seconds=600,
-        get_logs=True,
-        do_xcom_push=False
-    )
-    mapproxy_generate_tiles_rd_light = KubernetesPodOperator(
-        name="mapproxy_generate_tiles_rd_light",
-        image="dsoapi.azurecr.io/mapproxy",
-        namespace="airflow",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
-        task_id="mapproxy_generate_tiles_rd_light",
-        volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_light],
-        volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_light],
-        security_context=dict(fsGroup=101),
-        node_selector={"nodetype": "tiles"},
-        is_delete_operator_pod=False,
-        resources=fullresources,
-        startup_timeout_seconds=600,
-        get_logs=True,
-        do_xcom_push=False
-    )
+    # mapproxy_generate_tiles_rd_zw = KubernetesPodOperator(
+    #     name="mapproxy_generate_tiles_rd_zw",
+    #     image="dsoapi.azurecr.io/mapproxy",
+    #     namespace="airflow",
+    #     arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
+    #     task_id="mapproxy_generate_tiles_rd_zw",
+    #     volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_zw],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_zw],
+    #     security_context=dict(fsGroup=101),
+    #     node_selector={"nodetype": "tiles"},
+    #     is_delete_operator_pod=False,
+    #     resources=fullresources,
+    #     startup_timeout_seconds=600,
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
+    # mapproxy_generate_tiles_rd_light = KubernetesPodOperator(
+    #     name="mapproxy_generate_tiles_rd_light",
+    #     image="dsoapi.azurecr.io/mapproxy",
+    #     namespace="airflow",
+    #     arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
+    #     task_id="mapproxy_generate_tiles_rd_light",
+    #     volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_light],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_light],
+    #     security_context=dict(fsGroup=101),
+    #     node_selector={"nodetype": "tiles"},
+    #     is_delete_operator_pod=False,
+    #     resources=fullresources,
+    #     startup_timeout_seconds=600,
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
     upload_tiles_rd = KubernetesPodOperator(
         name="upload_tiles_rd",
         labels={"aadpodidbinding": "pio-tiles-id"},
