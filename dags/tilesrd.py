@@ -213,10 +213,9 @@ with DAG(
     #     do_xcom_push=False
     # )
 
-mapproxy_generate_tiles_rd >> upload_tiles_rd 
+trex_generate_vector_rd >> upload_vector_rd
 upload_vector_rd >> mapproxy_generate_tiles_rd >> upload_tiles_rd 
 # upload_vector_rd >> mapproxy_generate_tiles_rd_zw >> upload_tiles_rd_zw
 # upload_vector_rd >> mapproxy_generate_tiles_rd_light >> upload_tiles_rd_light
-# trex_generate_vector_rd >> upload_vector_rd
 # mapproxy_generate_tiles_rd_zw >> upload_tiles_rd_zw
 # mapproxy_generate_tiles_rd_light >> upload_tiles_rd_light
