@@ -133,7 +133,7 @@ with DAG(
         name="mapproxy_generate_tiles_rd_zw",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="airflow",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
+        arguments=["mapproxy-seed", "-c", "8", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_zw"],
         task_id="mapproxy_generate_tiles_rd_zw",
         volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_zw],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_zw],
@@ -149,7 +149,7 @@ with DAG(
         name="mapproxy_generate_tiles_rd_light",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="airflow",
-        arguments=["mapproxy-seed", "-c", "2", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
+        arguments=["mapproxy-seed", "-c", "8", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=rd_kbk_light"],
         task_id="mapproxy_generate_tiles_rd_light",
         volumes=[volume_config_mapproxy, volume_data_mapproxy_rd_light],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_rd_light],
@@ -213,8 +213,7 @@ with DAG(
         do_xcom_push=False
     )
 
-# trex_generate_vector_rd >> upload_vector_rd >> mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
-upload_vector_rd >> mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
+trex_generate_vector_rd >> upload_vector_rd >> mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
 mapproxy_generate_tiles_rd >> upload_tiles_rd
 mapproxy_generate_tiles_rd_zw >> upload_tiles_rd_zw
 mapproxy_generate_tiles_rd_light >> upload_tiles_rd_light
