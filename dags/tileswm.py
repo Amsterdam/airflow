@@ -217,4 +217,4 @@ with DAG(
 # upload_vector_wm >> mapproxy_generate_tiles_wm >> upload_tiles_wm
 # upload_vector_wm >> mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
 # upload_vector_wm >> mapproxy_generate_tiles_wm_light >> upload_tiles_wm_light 
-mapproxy_generate_tiles_wm >> upload_tiles_wm
+mapproxy_generate_tiles_wm_zw >> upload_tiles_wm_zw
