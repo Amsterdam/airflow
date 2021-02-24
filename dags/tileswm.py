@@ -117,7 +117,7 @@ with DAG(
         name="mapproxy_generate_tiles_wm",
         image="dsoapi.azurecr.io/mapproxy",
         namespace="airflow",
-        arguments=["mapproxy-seed", "-c", "4", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
+        arguments=["mapproxy-seed", "-c", "8", "-s", "/var/config/seed.yaml", "-f", "/var/config/mapproxy.yaml", "--seed=wm_kbk"],
         task_id="mapproxy_generate_tiles_wm",
         volumes=[volume_config_mapproxy, volume_data_mapproxy_wm],
         volume_mounts=[volume_mount_config, volume_mount_data_mapproxy_wm],
