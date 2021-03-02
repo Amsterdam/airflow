@@ -78,41 +78,41 @@ with DAG(
     schedule_interval=None,
     start_date=days_ago(2),
 ) as dag:
-    # trex_generate_vector_rd = KubernetesPodOperator(
-    #     name="trex_generate_vector_rd",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="sourcepole/t-rex",
-    #     namespace="airflow",
-    #     arguments=["generate", "--progress", "false", "--overwrite", "true", "--minzoom", "5", "--maxzoom", "11", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_rd.toml"],
-    #     task_id="trex_generate_vector_rd",
-    #     volumes=[volume_config_trex, volume_data_trex],
-    #     volume_mounts=[volume_mount_config, volume_mount_data_trex],
-    #     security_context=dict(fsGroup=33),
-    #     env_from=env_from,
-    #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=False,
-    #     startup_timeout_seconds=600,
-    #     resources=fullresources,
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )
-    # upload_vector_rd = KubernetesPodOperator(
-    #     name="upload_vector_rd",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="hawaku/azcopy",
-    #     namespace="airflow",
-    #     cmds=["/bin/bash"],
-    #     arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; sleep 2m; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
-    #     task_id="upload_vector_rd",
-    #     volumes=[volume_data_trex],
-    #     volume_mounts=[volume_mount_data_trex],
-    #     security_context=dict(fsGroup=101),
-    #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=False,
-    #     startup_timeout_seconds=600,
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )    
+    trex_generate_vector_rd = KubernetesPodOperator(
+        name="trex_generate_vector_rd",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="sourcepole/t-rex",
+        namespace="airflow",
+        arguments=["generate", "--progress", "false", "--overwrite", "true", "--minzoom", "5", "--maxzoom", "11", "--extent", "4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215", "--config", "/var/config/topo_rd.toml"],
+        task_id="trex_generate_vector_rd",
+        volumes=[volume_config_trex, volume_data_trex],
+        volume_mounts=[volume_mount_config, volume_mount_data_trex],
+        security_context=dict(fsGroup=33),
+        env_from=env_from,
+        node_selector={"nodetype": "tiles"},
+        is_delete_operator_pod=False,
+        startup_timeout_seconds=600,
+        resources=fullresources,
+        get_logs=True,
+        do_xcom_push=False
+    )
+    upload_vector_rd = KubernetesPodOperator(
+        name="upload_vector_rd",
+        labels={"aadpodidbinding": "pio-tiles-id"},
+        image="hawaku/azcopy",
+        namespace="airflow",
+        cmds=["/bin/bash"],
+        arguments=["-c", "azcopy login --identity --identity-client-id 60efcd71-1ca4-4650-ba7b-66f04c720d75; sleep 2m; azcopy copy '/var/cache/mvtcache/rd/*' https://piosupportstor.blob.core.windows.net/tiles/rd/ --recursive --content-encoding gzip --content-type application/vnd.mapbox-vector-tile"],
+        task_id="upload_vector_rd",
+        volumes=[volume_data_trex],
+        volume_mounts=[volume_mount_data_trex],
+        security_context=dict(fsGroup=101),
+        node_selector={"nodetype": "tiles"},
+        is_delete_operator_pod=False,
+        startup_timeout_seconds=600,
+        get_logs=True,
+        do_xcom_push=False
+    )    
     mapproxy_generate_tiles_rd = KubernetesPodOperator(
         name="mapproxy_generate_tiles_rd",
         image="dsoapi.azurecr.io/mapproxy",
@@ -213,8 +213,7 @@ with DAG(
         do_xcom_push=False
     )
 
-# trex_generate_vector_rd >> upload_vector_rd >> mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
-mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
+trex_generate_vector_rd >> upload_vector_rd >> mapproxy_generate_tiles_rd >> mapproxy_generate_tiles_rd_zw >> mapproxy_generate_tiles_rd_light 
 mapproxy_generate_tiles_rd >> upload_tiles_rd
 mapproxy_generate_tiles_rd_zw >> upload_tiles_rd_zw
 mapproxy_generate_tiles_rd_light >> upload_tiles_rd_light
