@@ -78,32 +78,13 @@ with DAG(
     schedule_interval=None,
     start_date=days_ago(2),
 ) as dag:
-    # trex_generate_vector_wm = KubernetesPodOperator(
-    #     name="trex_generate_vector_wm",
-    #     labels={"aadpodidbinding": "pio-tiles-id"},
-    #     image="piosupportacr.azurecr.io/t-rex",
-    #     namespace="airflow",
-    #     cmds=["/bin/bash"],
-    #     arguments=["-c", "export PGPASSWORD=$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fossrdbms-aad.database.windows.net&client_id=35fc234d-a881-4214-8cb7-fcf4f76a6d82' | jq -r .access_token)", ";", "t_rex generate --progress false --overwrite true --minzoom 10 --maxzoom 16 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml"],
-    #     task_id="trex_generate_vector_wm",
-    #     volumes=[volume_config_trex, volume_data_trex],
-    #     volume_mounts=[volume_mount_config, volume_mount_data_trex],
-    #     security_context=dict(fsGroup=33),
-    #     env_from=env_from,
-    #     node_selector={"nodetype": "tiles"},
-    #     is_delete_operator_pod=False,
-    #     startup_timeout_seconds=600,
-    #     resources=fullresources,
-    #     get_logs=True,
-    #     do_xcom_push=False
-    # )
     trex_generate_vector_wm = KubernetesPodOperator(
         name="trex_generate_vector_wm",
         labels={"aadpodidbinding": "pio-tiles-id"},
         image="piosupportacr.azurecr.io/t-rex",
         namespace="airflow",
         cmds=["/bin/bash"],
-        arguments=["-c", "t_rex generate --progress false --overwrite true --minzoom 10 --maxzoom 16 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml"],
+        arguments=["-c", "export DATABASE_PASSWORD=$(curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fossrdbms-aad.database.windows.net&client_id=60efcd71-1ca4-4650-ba7b-66f04c720d75' | jq -r .access_token)", ";", "t_rex generate --progress false --overwrite true --minzoom 10 --maxzoom 16 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml"],
         task_id="trex_generate_vector_wm",
         volumes=[volume_config_trex, volume_data_trex],
         volume_mounts=[volume_mount_config, volume_mount_data_trex],
@@ -116,6 +97,25 @@ with DAG(
         get_logs=True,
         do_xcom_push=False
     )
+    # trex_generate_vector_wm = KubernetesPodOperator(
+    #     name="trex_generate_vector_wm",
+    #     labels={"aadpodidbinding": "pio-tiles-id"},
+    #     image="piosupportacr.azurecr.io/t-rex",
+    #     namespace="airflow",
+    #     cmds=["/bin/bash"],
+    #     arguments=["-c", "t_rex generate --progress false --overwrite true --minzoom 10 --maxzoom 16 --extent 4.49712476945351,52.1630507756721,5.60867873764429,52.6147675426215 --config /var/config/topo_wm.toml"],
+    #     task_id="trex_generate_vector_wm",
+    #     volumes=[volume_config_trex, volume_data_trex],
+    #     volume_mounts=[volume_mount_config, volume_mount_data_trex],
+    #     security_context=dict(fsGroup=33),
+    #     env_from=env_from,
+    #     node_selector={"nodetype": "tiles"},
+    #     is_delete_operator_pod=False,
+    #     startup_timeout_seconds=600,
+    #     resources=fullresources,
+    #     get_logs=True,
+    #     do_xcom_push=False
+    # )
     upload_vector_wm = KubernetesPodOperator(
         name="upload_vector_wm",
         labels={"aadpodidbinding": "pio-tiles-id"},
