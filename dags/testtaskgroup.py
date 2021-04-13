@@ -24,12 +24,19 @@ with DAG(
         task1 = BashOperator(task_id="echo1", bash_command=f"echo 'Hello'")
         task2 = BashOperator(task_id="echo2", bash_command=f"echo 'Team'")
 
-    task3 = BashOperator(task_id="echo3", bash_command=f"echo 'Data Services'")
+        task1 >> task2
+
+    with TaskGroup('processing_tasks') as processing_tasks:
+        task3 = BashOperator(task_id="echo3", bash_command=f"echo 'More'")
+        task4 = BashOperator(task_id="echo4", bash_command=f"echo 'Hello'")
+
+    task5 = BashOperator(task_id="echo5", bash_command=f"echo 'Data Services'")
 
 
 (
     startup_tasks
-    >> task3
+    >> processing_tasks
+    >> task5
 )
 
 dag.doc_md = """
