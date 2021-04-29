@@ -1,4 +1,4 @@
-FROM docker.io/bitnami/airflow-worker:2.0.2
+FROM docker.io/bitnami/airflow-worker:2.0.1
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 USER root
