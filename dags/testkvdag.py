@@ -6,7 +6,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.utils.task_group import TaskGroup
 
 dag_id = "testkvdag"
-variable_test= Variable.get("testvariable", deserialize_json=True)
+variable_test= Variable.get("testvariable")
 
 from common import (
     default_args
