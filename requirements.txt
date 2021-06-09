@@ -34,6 +34,8 @@ attrs==20.3.0
     #   cattrs
     #   jsonschema
     #   pg-grant
+authlib==0.15.3
+    # via -r requirements.in
 azure-core==1.11.0
     # via azure-storage-blob
 azure-storage-blob==12.7.1
@@ -92,6 +94,7 @@ croniter==0.3.37
 cryptography==3.3.1
     # via
     #   apache-airflow
+    #   authlib
     #   azure-storage-blob
 cx-oracle==7.3.0
     # via -r requirements.in
@@ -129,7 +132,9 @@ environs==7.3.1
 flake8==3.7.9
     # via -r requirements.in
 flask-appbuilder==3.1.1
-    # via apache-airflow
+    # via
+    #   -r requirements.in
+    #   apache-airflow
 flask-babel==1.0.0
     # via flask-appbuilder
 flask-caching==1.9.0
@@ -177,6 +182,8 @@ idna==2.10
     # via
     #   email-validator
     #   requests
+importlib-metadata==1.7.0
+    # via apache-airflow
 importlib-resources==1.5.0
     # via apache-airflow
 inflection==0.5.1
@@ -513,6 +520,8 @@ xlrd==1.2.0
     # via -r requirements.in
 yamlip==0.0.2
     # via -r requirements.in
+zipp==3.4.1
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
