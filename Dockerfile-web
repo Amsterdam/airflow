@@ -35,8 +35,7 @@ RUN apt-get update \
         supervisor \
         curl \
         libcurl4 \
-        zip
-
+        zip \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
 COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
