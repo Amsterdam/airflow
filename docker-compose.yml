@@ -1,5 +1,6 @@
 version: "3.7"
 services:
+
   database:
     image: amsterdam/postgres11
     ports:
@@ -19,6 +20,7 @@ services:
       POSTGRES_PASSWORD: insecure
     extra_hosts:
       admin.data.amsterdam.nl: 10.243.16.4
+
   airflow:
     build:
       context: .

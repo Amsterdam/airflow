@@ -42,4 +42,4 @@ RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $P
 EXPOSE 8080
 
 ENTRYPOINT [ "/opt/bitnami/scripts/airflow-worker/entrypoint.sh" ]
-CMD [ "/opt/bitnami/scripts/airflow-worker/run.sh" ]
+CMD [ "/run.sh", "worker" ]

@@ -30,7 +30,21 @@ RUN apt-get update \
         libxml2 \
         libfreetype6 \
         libtiff5 \
+        rsync \
+        libaio1 \
+        supervisor \
+        curl \
+        libcurl4 \
+        zip
+
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
+
+COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
+COPY scripts/mkuser.py ${AIRFLOW_USER_HOME}/scripts/mkuser.py
+# COPY scripts/checkdags.py ${AIRFLOW_USER_HOME}/scripts/checkdags.py
+COPY data/ ${AIRFLOW_USER_HOME}/data/
+COPY vars ${AIRFLOW_USER_HOME}/vars/
+COPY scripts/run.sh /run.sh
 
 USER 1001
 
@@ -41,4 +55,4 @@ RUN /opt/bitnami/airflow/venv/bin/pip install --no-cache-dir -r $PIP_REQUIREMENT
 EXPOSE 8080
 
 ENTRYPOINT [ "/opt/bitnami/scripts/airflow/entrypoint.sh" ]
-CMD [ "/opt/bitnami/scripts/airflow/run.sh" ]
+CMD [ "/run.sh", "webserver" ]

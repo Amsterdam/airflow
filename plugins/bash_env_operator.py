@@ -1,12 +1,12 @@
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.decorators import apply_defaults
 
 
 class BashEnvOperator(BashOperator):
-    """ The regular BashOperator can have extra environment var
-        using the 'env' (templated) param. However, it is not
-        possible to use a callable to expand the environment vars
-        with an extra dict.
+    """The regular BashOperator can have extra environment var
+    using the 'env' (templated) param. However, it is not
+    possible to use a callable to expand the environment vars
+    with an extra dict.
     """
 
     @apply_defaults
