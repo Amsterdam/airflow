@@ -7,7 +7,7 @@ set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
 
-if ( [ "$1" == "scheduler" ] || [ "$1" == "webserver" ] ); then
+if ( [ "$1" == "scheduler" ] || [ "$1" == "worker" ] ); then
     # Load Airflow environment variables
     . /opt/bitnami/scripts/airflow-$1-env.sh
     # Load libraries
