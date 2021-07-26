@@ -9,6 +9,7 @@ RUN apt-get update \
         unzip \
         gcc \
         libc-dev \
+        libpq-dev \
         wget \
         dnsutils \
         vim-tiny \

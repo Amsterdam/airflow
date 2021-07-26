@@ -13,6 +13,7 @@ RUN apt-get update \
         unzip \
         gcc \
         libc-dev \
+        libpq-dev \
         wget \
         dnsutils \
         net-tools \
