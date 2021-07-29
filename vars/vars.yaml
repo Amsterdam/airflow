@@ -1,0 +1,354 @@
+generic:
+  test: []
+huishoudelijkafval:
+  files:
+    - afval_weging
+    - afval_container
+    - afval_cluster
+parkeerzones:
+  files_to_download: parkeerzones.zip
+  files_to_proces:
+    parkeerzones: act_RDW_3EXP_VERGUNNINGGEBIED.shp
+    parkeerzones_uitzondering: act_RDW_3EXP_UITZ_VERGUNNINGGEBIED.shp
+reclamebelasting:
+  files_to_download:
+    shp_file: Reclame_tariefgebieden.shp
+    zip_file: reclame-tarief-gebieden.zip
+bekendmakingen:
+  wfs_endpoint: wfs
+  wfs_params:
+    request: GetFeature
+    SERVICE: WFS
+    VERSION: 1.2.0
+    TYPENAME: geozet:bekendmakingen_punt
+    FILTER: |
+      <Filter>
+        <PropertyIsEqualTo>
+          <PropertyName>geozet:overheid</PropertyName>
+          <Literal>Amsterdam</Literal>
+        </PropertyIsEqualTo>
+      </Filter>
+    outputFormat: application/json
+  geotype: ST_Point
+asbest:
+  zip_file: Amsterdam_Asbestverdachte_daken_Shape.zip
+  shp_files:
+    - Asbestverdachte_daken_gegevens.shp
+    - Asbestverdachte_Percelen.shp
+  tables:
+    - asbest_daken_new
+    - asbest_percelen_new
+  rename_tablenames:
+    - asbest_daken
+    - asbest_percelen
+vergunningen:
+  files_to_download: [bb_quotum.sql, omzettingen_quotum.sql]
+  table_source_names:
+    [quota_bbkaartlaagexport, quota_omzettingenkaartlaagexport]
+  table_target_names: [bedandbreakfast, omzetting]
+bedrijveninvesteringszones:
+  files_to_download:
+    shp_files: [BIZZONES.dbf, BIZZONES.shx, BIZZONES.shp]
+    xlsx_files: [BIZZONES_dataset.xlsx]
+hior:
+  xls_endpoint: "hior/HIOR Amsterdam.xlsx"
+cmsa:
+  files_to_download: [beacons.csv, cameras.xlsx]
+openbareverlichting:
+  data_endpoints:
+    objects: services/rest_sia.php/SIAService/objecten
+    objecttypes: services/rest_sia.php/SIAService/types
+trm:
+  - zip: Tram KGEs.zip
+    name: tram
+    shp: KGE_hartlijnen_Amsterdam_2.054.shp
+  - zip: Metro KGEs.zip
+    name: metro
+    shp: Metro KGEs.shp
+winkelgebieden:
+  schema_end_point: datasets/winkelgebieden/winkelgebieden
+bouwstroompunten:
+  data_endpoints:
+    auth: auth/local/
+    data: power-stations?city=Amsterdam
+precariobelasting:
+  data_endpoints:
+    bedrijfsvaartuigen: dcatd/datasets/aUBH75WzCsTcYQ/purls/3
+    passagiersvaartuigen: dcatd/datasets/aUBH75WzCsTcYQ/purls/4
+    woonschepen: dcatd/datasets/aUBH75WzCsTcYQ/purls/2
+    terrassen: dcatd/datasets/aUBH75WzCsTcYQ/purls/1
+  temp_data:
+    bedrijfsvaartuigen: precariobelasting/bedrijfsvaartuigen.geojson
+    passagiersvaartuigen: precariobelasting/passagiersvaartuigen.geojson
+    woonschepen: precariobelasting/woonschepen.geojson
+    terrassen: precariobelasting/terrassen.geojson
+touringcars:
+  data_endpoints:
+    aanbevolenroutes: dcatd/datasets/IuAYhr-__qZj9Q/purls/wFSs8bEzvW7S9w
+    verplichteroutes: dcatd/datasets/IuAYhr-__qZj9Q/purls/6PQYbDv09_dhpA
+    haltes: dcatd/datasets/IuAYhr-__qZj9Q/purls/uEOyRO9EKBNIeA
+    doorrijhoogtes: dcatd/datasets/IuAYhr-__qZj9Q/purls/nAHH3iH-FQqA7g
+    parkeerplaatsen: dcatd/datasets/IuAYhr-__qZj9Q/purls/uB95bElRaUcD0A
+    wegwerkzaamheden: dcatd/datasets/IuAYhr-__qZj9Q/purls/csfA78CYaXgnsw
+  metadataschema_endpoint: datasets/touringcars/touringcars
+bodem:
+  files_to_download:
+    grond: dmb_grondmonster.csv
+    grondwater: dmb_watermonster.csv
+    asbest: dmb_asbest.csv
+explosieven:
+  files_to_download:
+    bominslag: [Inslagen_ea.shp, Inslagen_ea.shx, Inslagen_ea.dbf]
+    verdachtgebied:
+      [Verdachte_gebieden.shp, Verdachte_gebieden.shx, Verdachte_gebieden.dbf]
+    gevrijwaardgebied:
+      [Gevrijwaard_gebied.shp, Gevrijwaard_gebied.shx, Gevrijwaard_gebied.dbf]
+    uitgevoerdonderzoek:
+      [
+        Reeds_uitgevoerde_CE_onderzoeken.shp,
+        Reeds_uitgevoerde_CE_onderzoeken.shx,
+        Reeds_uitgevoerde_CE_onderzoeken.dbf,
+      ]
+geluidszones:
+  files_to_download:
+    themas: dro_thema.csv
+    metro-spoorwegen-industrie: dro_geluid.csv
+    schiphol: dro_geluid_schiphol.csv
+covid19:
+  files_to_download:
+    [OOV_COVID19_totaal.shp, OOV_COVID19_totaal.shx, OOV_COVID19_totaal.dbf]
+  tables_to_create:
+    alcoholverkoopverbod: AVV
+    straatartiestverbod: SAV
+    gebiedsverbod: GVP
+spoorlijnen:
+  files_to_download:
+    metro: [metro.shp, metro.shx, metro.dbf]
+    tram: [tram.shp, tram.shx, tram.dbf]
+overlastgebieden:
+  files_to_download:
+    [OOV_gebieden_totaal.shp, OOV_gebieden_totaal.shx, OOV_gebieden_totaal.dbf]
+  tables_to_create:
+    cameratoezicht: CTG
+    dealeroverlast: DOG
+    uitgaansoverlast: UOG
+    alcoholverbod: AVG
+    taxistandplaats: taxi
+    vuurwerkvrij: VVZ
+    barbecueverbod: BBQ
+    rondleidingverbod: RLV
+    algemeenoverlast: AOG
+    messenverbod: MVG
+    groepsfietsverbod: GFG
+milieuzones:
+  files_to_download: [milieuzones.json]
+  tables_to_create:
+    touringcar: touringcar
+    taxi: taxi
+    bromensnorfiets: brom- en snorfiets
+    vrachtauto: vracht
+    bestelbus: bestel
+evenementen:
+  data_endpoint: https://evenementen.amsterdam.nl/?geojson=true&pager_rows=5000
+aardgasvrijezones:
+  files_to_download:
+    buurt:
+      [
+        buurten_na_inspraak.dbf,
+        buurten_na_inspraak.shp,
+        buurten_na_inspraak.shx,
+      ]
+    buurtinitiatief:
+      [buurtinitiatieven.dbf, buurtinitiatieven.shp, buurtinitiatieven.shx]
+vastgoed:
+  files_to_download: [export_vastgoed.csv]
+sport:
+  files_to_download:
+    csv:
+      zwembad: dcatd/datasets/o-HEFxsOggSf8A/purls/bjpABHIt0g6IyQ
+      sportaanbieder: dcatd/datasets/a6WW_Ay-oeY_dQ/purls/2
+      gymsportzaal: dcatd/datasets/XtEra6am2lDbHg/purls/gL_MLa12hbigZA
+      sporthal: dcatd/datasets/o-HEFxsOggSf8A/purls/bjpABHIt0g6IyQ
+    geojson:
+      hardlooproute: dcatd/datasets/IOWJ4z4vmfF8Hw/purls/1
+      sportveld: dcatd/datasets/mdp9l38vc9omBQ/purls/2
+      sportpark: dcatd/datasets/mdp9l38vc9omBQ/purls/5
+  data_endpoints:
+    geojson:
+      openbaresportplek: open_geodata/geojson.php?KAARTLAAG=SPORT_OPENBAAR&THEMA=sport
+verzinkbarepalen:
+  data_endpoints: open_geodata/geojson.php?KAARTLAAG=VIS_BFA&THEMA=vis
+basiskaart:
+  # TODO: Amsterdam schema as source for object creation.
+  tables_to_create:
+    gebouwvlak: SELECT_GEBOUWVLAK_SQL
+    inrichtingselementlijn: SELECT_INRICHTINGSELEMENTLIJN_SQL
+    inrichtingselementpunt: SELECT_INRICHTINGSELEMENTPUNT_SQL
+    inrichtingselementvlak: SELECT_INRICHTINGSELEMENTVLAK_SQL
+    spoorlijn: SELECT_SPOORLIJN_SQL
+    terreindeelvlak: SELECT_TERREINDEELVLAK_SQL
+    waterdeellijn: SELECT_WATERDEELLIJN_SQL
+    waterdeelvlak: SELECT_WATERDEELVLAK_SQL
+    wegdeelvlak: SELECT_WEGDEELVLAK_SQL
+    wegdeellijn: SELECT_WEGDEELLIJN_SQL
+    labels: SELECT_LABELS_SQL
+ondergrond:
+  files_to_download:
+    historischeonderzoeken: kaartlaag_database_historisch_onderzoeken.geojson
+veiligeafstanden:
+  files_to_download:
+    themas: dro_thema.csv
+    veiligeafstanden: dro_veiligheid.csv
+risicozones:
+  files_to_download:
+    lpgtanks: [dmb_lpg_tank.csv]
+    lpgtankstations: [dmb_lpg_station.csv, dmb_lpg_station_punten.csv]
+    lpgafleverzuilen: [dmb_lpg_afleverzuil.csv]
+    lpgvulpunten: [dmb_lpg_vulpunt.csv]
+    bedrijven: [dmb_veilig_bedrijven.csv, dmb_veilig_bedr_punten.csv]
+    bronnen: [dmb_veilig_bronnen.csv]
+    contouren: [dmb_veilig_contouren.csv]
+    infrastructuur:
+      [dro_risico_spoorweg.csv, dro_risico_vaarweg.csv, dro_risico_weg.csv]
+    aardgasleidingen: [dmb_aardgas_leiding.csv]
+    aardgasgebieden:
+      [
+        dmb_aardgas_100let.csv,
+        dmb_aardgas_1let.csv,
+        dmb_aardgas_pr10_6.csv,
+        dmb_aardgas_zakelijk.csv,
+      ]
+  files_to_merge:
+    lpgtankstations:
+      target_file: dmb_lpg_station.csv
+      source_file: dmb_lpg_station_punten.csv
+      mutual_key: stationnummer
+      map_source_field_to_target: '{"geometrie":"geometrie_punt"}'
+    bedrijven:
+      target_file: dmb_veilig_bedrijven.csv
+      source_file: dmb_veilig_bedr_punten.csv
+      mutual_key: id
+      map_source_field_to_target: '{"geometrie":"geometrie_punt"}'
+    lpgvulpunten:
+      target_file: dmb_lpg_vulpunt.csv
+      source_file: dmb_lpg_vulpunt.csv
+      mutual_key: stationnummer
+      map_source_field_to_target: '{"geometrie":"geometrie_punt"}'
+      source_filter:
+        {
+          "filter_type": "like",
+          "filter_column": "geometrie",
+          "filter_value": "POINT",
+        }
+      target_filter:
+        {
+          "filter_type": "like",
+          "filter_column": "geometrie",
+          "filter_value": "POLYGON",
+        }
+    lpgafleverzuilen:
+      target_file: dmb_lpg_afleverzuil.csv
+      source_file: dmb_lpg_afleverzuil.csv
+      mutual_key: stationnummer
+      map_source_field_to_target: '{"geometrie":"geometrie_punt"}'
+      source_filter:
+        {
+          "filter_type": "like",
+          "filter_column": "geometrie",
+          "filter_value": "POINT",
+        }
+      target_filter:
+        {
+          "filter_type": "like",
+          "filter_column": "geometrie",
+          "filter_value": "POLYGON",
+        }
+  files_to_union:
+    aardgasbieden:
+      target_file: dmb_aardgas_100let.csv
+      source_file:
+        [
+          dmb_aardgas_100let.csv,
+          dmb_aardgas_1let.csv,
+          dmb_aardgas_pr10_6.csv,
+          dmb_aardgas_zakelijk.csv,
+        ]
+      source_file_content_type:
+        [
+          letaliteitsafstand_100%,
+          letaliteitsafstand_1%,
+          plaatsgebondenrisico,
+          belemmeringenstrook,
+        ]
+      source_file_content_column: [type]
+      row_unique_cols: [geometrie]
+    infrastructuur:
+      target_file: dro_risico_spoorweg.csv
+      source_file:
+        [dro_risico_spoorweg.csv, dro_risico_vaarweg.csv, dro_risico_weg.csv]
+      source_file_content_type: [spoorweg, vaarweg, autoweg]
+      source_file_content_column: [type]
+      row_unique_cols: [geometrie]
+  files_to_cleanse:
+    bronnen:
+      source_file: dmb_veilig_bronnen.csv
+      row_unique_cols: [bedrijfsnaam, geometrie]
+  files_to_fix_geom:
+    aardgasleidingen:
+      source_file: dmb_aardgas_leiding.csv
+      geom_data_type_to_use: MultiLineString
+    infrastructuur:
+      source_file: dro_risico_spoorweg.csv
+      geom_data_type_to_use: MultiPolygon
+    bronnen:
+      source_file: dmb_veilig_bronnen.csv
+      geom_data_type_to_use: MultiPolygon
+    contouren:
+      source_file: dmb_veilig_contouren.csv
+      geom_data_type_to_use: MultiPolygon
+    bedrijven:
+      source_file: dmb_veilig_bedrijven.csv
+      geom_data_type_to_use: MultiPolygon
+schiphol:
+  files_to_download:
+    themas: dro_thema.csv
+    hoogtebeperkingradar: dro_schiphol_radar.csv
+    maatgevendetoetshoogtes: dro_schiphol_maatgevende_toetshoogte.csv
+    vogelvrijwaringsgebieden: dro_vogel.csv
+    geluidzones: dro_geluid_schiphol.csv
+bbga:
+  data_endpoints:
+    bbga_latest_and_greatest: dcatd/datasets/G5JpqNbhweXZSw/purls/LXGOPUQQfAXBbg
+    metadata_latest_and_greatest: dcatd/datasets/G5JpqNbhweXZSw/purls/_V6g35HdgsK2nA
+    bbga_std_latest_and_greatest: dcatd/datasets/G5JpqNbhweXZSw/purls/2
+  table_mappings:
+    bbga_latest_and_greatest: bbga_kerncijfers
+    metadata_latest_and_greatest: bbga_indicatoren_definities
+    bbga_std_latest_and_greatest: bbga_statistieken
+wior:
+  data_endpoints:
+    wfs: /ows?service=wfs&version=2.0.0&request=GetFeature&TYPENAMES=WIOR_AMS:datapunt_liv_alg_ww_projecten&outputFormat=application/json
+deelmobiliteit:
+  scooters:
+    data_endpoints:
+      ridecheck: /scooters
+      felyx: /gbfs/free_bike_status.json
+  autos:
+    data_endpoints:
+      mywheels: /api/
+rdw:
+  data_endpoints:
+    basis: /m9d7-ebf2.csv
+    brandstof: /8ys7-d773.csv
+    assen: /3huj-srit.csv
+    carrosserie: /vezc-m2t6.csv
+stroomstoringen:
+  data_endpoints:
+    stroomstoringen: "/v6W5HAVrpgSg3vts/ArcGIS/rest/services/IStoringen_Productie_V7/FeatureServer/0/query?where=STORING_DATUM_GEMELD+>%3D+%27{today}%27+AND+\
+                    lower(STORING_GETROFFEN_PLAATSEN)+in+(%27amsterdam%27,%27weesp%27)&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&\
+                    patialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&\
+                    returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&\
+                    geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&\
+                    returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&\
+                    groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&\
+                    returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token="

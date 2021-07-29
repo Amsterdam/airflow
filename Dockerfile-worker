@@ -1,6 +1,10 @@
 FROM docker.io/bitnami/airflow-worker:2.0.1
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
+ENV AIRFLOW_USER_HOME=${AIRFLOW_USER_HOME}
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
+
 USER root
 RUN apt-get update \
  && apt-get dist-upgrade -y \
@@ -9,6 +13,7 @@ RUN apt-get update \
         unzip \
         gcc \
         libc-dev \
+        libpq-dev \
         wget \
         dnsutils \
         vim-tiny \
@@ -30,16 +35,29 @@ RUN apt-get update \
         libxml2 \
         libfreetype6 \
         libtiff5 \
-        jq \
+        rsync \
+        libaio1 \
+        supervisor \
+        curl \
+        libcurl4 \
+        zip \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
-USER 1001
+COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
+COPY scripts/mkuser.py ${AIRFLOW_USER_HOME}/scripts/mkuser.py
+# COPY scripts/checkdags.py ${AIRFLOW_USER_HOME}/scripts/checkdags.py
+COPY data/ ${AIRFLOW_USER_HOME}/data/
+COPY vars ${AIRFLOW_USER_HOME}/vars/
+COPY scripts/run.sh /run.sh
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
 RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $PIP_REQUIREMENTS
+RUN /opt/bitnami/airflow/venv/bin/python ${AIRFLOW_USER_HOME}/scripts/mkvars.py
+
+USER 1001
 
 EXPOSE 8080
 
 ENTRYPOINT [ "/opt/bitnami/scripts/airflow-worker/entrypoint.sh" ]
-CMD [ "/opt/bitnami/scripts/airflow-worker/run.sh" ]
+CMD [ "/run.sh", "worker" ]
