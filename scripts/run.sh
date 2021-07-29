@@ -25,7 +25,6 @@ args=("--pid" "$AIRFLOW_PID_FILE" "$@")
 
 airflow db init  # db init is not destructive, so can be re-run at startup
 airflow db upgrade  # upgrade DB if needed
-python scripts/mkvars.py
 
 # creating an admin and regular users (nessacary when using RABC=True in the airflow.cnf)
 airflow users create -r Admin -u admin -e admin@example.com -f admin -l admin -p ${AIRFLOW_USER_ADMIN_PASSWD:-admin}
@@ -103,7 +102,7 @@ airflow connections add rdw_conn_id \
 # airflow variables -i vars/vars.json &
 # airflow scheduler &
 # airflow webserver
-airflow variables import vars/vars.json
+airflow variables import ${AIRFLOW_USER_HOME}/vars/vars.json
 
 # Check all dags by running them as python modules.
 # This is whait the Airflow dagbag is also doing.
@@ -116,8 +115,8 @@ airflow variables import vars/vars.json
 #python scripts/checkdags.py || exit
 
 info "** Starting Airflow **"
-if am_i_root; then
-    exec gosu "$AIRFLOW_DAEMON_USER" "${AIRFLOW_BIN_DIR}/airflow" "$1" "${args[@]}"
-else
-    exec "${AIRFLOW_BIN_DIR}/airflow" "$1" "${args[@]}"
-fi
+# if am_i_root; then
+#     "$AIRFLOW_DAEMON_USERz ${AIRFLOW_BIN_DIR}/airflow $1"
+# else
+airflow $1
+# fi
