@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC1091
 
-set -o errexit
+# set -o errexit # when airflow connections delete is executed, and cannot find the connection, it should not lead to a stop but continue.
 set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
