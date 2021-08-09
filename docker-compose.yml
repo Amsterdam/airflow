@@ -37,3 +37,5 @@ services:
     volumes:
       - ./dags:/opt/bitnami/airflow/dags
       - ./plugins:/opt/bitnami/airflow/plugins
+      - ./vsd:/opt/bitnami/airflow/vsd
+      - ./vsd:/opt/bitnami/airflow/dags/vsd

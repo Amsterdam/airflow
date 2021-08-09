@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC1091
 
-# set -o errexit # when airflow connections delete is executed, and cannot find the connection, it should not lead to a stop but continue.
+set -o errexit
 set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
@@ -36,6 +36,8 @@ airflow users create -r User -u team_ruimte -e team_ruimte@example.com -f team_r
 # So we (re-)create the slack connection on startup.
 #
 # WARNING: DEPRECATED way of creating Connections, please use Env variables.
+
+set +e # when airflow connections delete is executed, and cannot find the connection, it should not lead to a stop but continue.
 airflow connections delete slack
 airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
     --conn-password "/$SLACK_WEBHOOK" --conn-type http
@@ -102,6 +104,8 @@ airflow connections add rdw_conn_id \
 # airflow variables -i vars/vars.json &
 # airflow scheduler &
 # airflow webserver
+
+set -o errexit
 airflow variables import ${AIRFLOW_USER_HOME}/vars/vars.json
 
 # Check all dags by running them as python modules.
@@ -113,6 +117,12 @@ airflow variables import ${AIRFLOW_USER_HOME}/vars/vars.json
 # Make sure that the the containing shell script (run.sh)
 # stops on errors (set -e).
 #python scripts/checkdags.py || exit
+
+#echo -e "**************************** My ${AIRFLOW_USER_HOME} is HOME *************************************"
+#echo -e "the contents of  ${AIRFLOW_USER_HOME} is:" && ls -lR ${AIRFLOW_USER_HOME}
+# echo "my file /opt/bitnami/scripts/airflow-env.sh = " && cat /opt/bitnami/scripts/airflow-env.sh
+# cd ${AIRFLOW_USER_HOME}
+
 
 info "** Starting Airflow **"
 # if am_i_root; then
