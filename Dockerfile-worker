@@ -41,6 +41,10 @@ RUN apt-get update \
         curl \
         libcurl4 \
         zip \
+        libdbd-pg-perl \
+        postgresql-server-dev-all \
+        postgresql-common \
+        libterm-readpassword-perl \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
 COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
@@ -59,14 +63,18 @@ COPY scripts/run.sh /run.sh
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
-
 RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $PIP_REQUIREMENTS
 RUN /opt/bitnami/airflow/venv/bin/python ${AIRFLOW_USER_HOME}/scripts/mkvars.py
 
-WORKDIR /tmp
-RUN wget -nv https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basiclite-linux.x64-19.6.0.0.0dbru.zip
-RUN unzip instantclient-basiclite-linux.x64-19.6.0.0.0dbru.zip
-RUN cp -r  instantclient_19_6/* /usr/local/lib
+# Installing Oracle instant client
+WORKDIR /opt/oracle
+RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
+    && unzip instantclient-basiclite-linuxx64.zip \
+    && rm -f instantclient-basiclite-linuxx64.zip \
+    && cd /opt/oracle/instantclient* \
+    && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
+    && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
+    && ldconfig
 
 USER 1001
 WORKDIR ${AIRFLOW_USER_HOME}
