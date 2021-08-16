@@ -1,4 +1,4 @@
-FROM docker.io/bitnami/airflow-worker:2.0.1
+FROM apache/airflow:2.1.2
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
@@ -49,22 +49,16 @@ RUN apt-get update \
 
 COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
 COPY scripts/mkuser.py ${AIRFLOW_USER_HOME}/scripts/mkuser.py
-# COPY scripts/checkdags.py ${AIRFLOW_USER_HOME}/scripts/checkdags.py
 COPY data/ ${AIRFLOW_USER_HOME}/data/
-COPY vars ${AIRFLOW_USER_HOME}/vars/
-COPY vsd ${AIRFLOW_USER_HOME}/vsd/
-# this copy is used to make sure the VSD dag (.py) gets loaded correctly
-# Airflow is complaining about missing the files in the path below
-# TODO figure out why, seems that vsd .py file is in /opt/bitnami/airflow/dags/git_dags/
-# and it's looking in the code for the /vsd/ folder one level up (parent). So it is looking
-# in /opt/bitnami/airflow/dags/vsd/ instead of ${AIRFLOW_USER_HOME}/vsd/
-COPY vsd /opt/bitnami/airflow/dags/vsd/
+COPY vars/ ${AIRFLOW_USER_HOME}/vars/
+COPY vsd/ ${AIRFLOW_USER_HOME}/vsd/
+COPY plugins/ ${AIRFLOW_USER_HOME}/plugins/
 COPY scripts/run.sh /run.sh
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
-RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $PIP_REQUIREMENTS
-RUN /opt/bitnami/airflow/venv/bin/python ${AIRFLOW_USER_HOME}/scripts/mkvars.py
+RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
+RUN python ${AIRFLOW_USER_HOME}/scripts/mkvars.py
 
 # Installing Oracle instant client
 WORKDIR /opt/oracle
@@ -76,10 +70,8 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
     && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
     && ldconfig
 
-USER 1001
 WORKDIR ${AIRFLOW_USER_HOME}
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/opt/bitnami/scripts/airflow-worker/entrypoint.sh" ]
-CMD [ "/run.sh", "worker" ]
+CMD [ "/run.sh" ]

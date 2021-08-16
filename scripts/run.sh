@@ -7,30 +7,16 @@ set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
 
-if ( [ "$1" == "scheduler" ] || [ "$1" == "worker" ] ); then
-    # Load Airflow environment variables
-    . /opt/bitnami/scripts/airflow-$1-env.sh
-    # Load libraries
-    . /opt/bitnami/scripts/libos.sh
-    . /opt/bitnami/scripts/libairflow$1.sh
-else
-    # Load Airflow environment variables
-    . /opt/bitnami/scripts/airflow-env.sh
-    # Load libraries
-    . /opt/bitnami/scripts/libos.sh
-    . /opt/bitnami/scripts/libairflow.sh
-fi
-
 args=("--pid" "$AIRFLOW_PID_FILE" "$@")
 
 airflow db init  # db init is not destructive, so can be re-run at startup
 airflow db upgrade  # upgrade DB if needed
 
 # creating an admin and regular users (nessacary when using RABC=True in the airflow.cnf)
-airflow users create -r Admin -u admin -e admin@example.com -f admin -l admin -p ${AIRFLOW_USER_ADMIN_PASSWD:-admin}
+# airflow users create -r Admin -u admin -e admin@example.com -f admin -l admin -p ${AIRFLOW_USER_ADMIN_PASSWD:-admin}
 
-airflow users create -r User -u dataservices -e dataservices@example.com -f dataservices -l dataservices -p ${AIRFLOW_USER_DATASERVICES_PASSWD:-dataservices}
-airflow users create -r User -u team_ruimte -e team_ruimte@example.com -f team_ruimte -l team_ruimte -p ${AIRFLOW_USER_TEAM_RUIMTE_PASSWD:-team_ruimte}
+# airflow users create -r User -u dataservices -e dataservices@example.com -f dataservices -l dataservices -p ${AIRFLOW_USER_DATASERVICES_PASSWD:-dataservices}
+# airflow users create -r User -u team_ruimte -e team_ruimte@example.com -f team_ruimte -l team_ruimte -p ${AIRFLOW_USER_TEAM_RUIMTE_PASSWD:-team_ruimte}
 
 # Airflow does not support slack connection config through environment var
 # So we (re-)create the slack connection on startup.
@@ -122,11 +108,3 @@ airflow variables import ${AIRFLOW_USER_HOME}/vars/vars.json
 #echo -e "the contents of  ${AIRFLOW_USER_HOME} is:" && ls -lR ${AIRFLOW_USER_HOME}
 # echo "my file /opt/bitnami/scripts/airflow-env.sh = " && cat /opt/bitnami/scripts/airflow-env.sh
 # cd ${AIRFLOW_USER_HOME}
-
-
-info "** Starting Airflow **"
-# if am_i_root; then
-#     "$AIRFLOW_DAEMON_USERz ${AIRFLOW_BIN_DIR}/airflow $1"
-# else
-airflow $1
-# fi
