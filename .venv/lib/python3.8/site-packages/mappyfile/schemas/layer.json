@@ -1,0 +1,360 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^__[a-z]+__$": {}
+  },
+  "properties": {
+    "__type__": {
+      "enum": [ "layer" ]
+    },
+    "__comments__": {
+      "type": "object"
+    },
+    "__position__": {
+      "type": "object"
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "$ref": "class.json"
+      }
+    },
+    "classgroup": {
+      "type": "string"
+    },
+    "classitem": {
+      "type": "string"
+    },
+    "cluster": {
+      "allOf": [
+        {
+          "$ref": "cluster.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.0
+      }
+    },
+    "composites": {
+      "type": "array",
+      "items": {
+        "$ref": "composite.json"
+      },
+      "metadata": {
+        "minVersion": 7.0
+      }
+    },
+    "connection": {
+      "type": "string"
+    },
+    "connectionoptions": {
+      "allOf": [
+        {
+          "$ref": "connectionoptions.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 7.6
+      }
+    },
+    "connectiontype": {
+      "enum": [ "contour", "kerneldensity", "local", "ogr", "oraclespatial", "plugin", "postgis", "sde", "union", "uvraster", "wfs", "wms", "mygis" ]
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "debug": {
+      "allOf": [
+        {
+          "$ref": "debug.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "dump": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "onoff.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "encoding": {
+      "type": "string",
+      "metadata": {
+        "minVersion": 7.0
+      }
+    },
+    "extent": {
+      "$ref": "extent.json"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "feature.json"
+      }
+    },
+    "filter": {
+      "$ref": "expression.json"
+    },
+    "filteritem": {
+      "type": "string"
+    },
+    "footer": {
+      "type": "string"
+    },
+    "geomtransform": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\((.*?)\\)$"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.4
+      }
+    },
+    "grid": {
+      "$ref": "grid.json"
+    },
+    "group": {
+      "type": "string"
+    },
+    "header": {
+      "type": "string"
+    },
+    "joins": {
+      "type": "array",
+      "items": {
+        "$ref": "join.json"
+      }
+    },
+    "labelangleitem": {
+      "type": "string",
+      "metadata": {
+        "maxVersion": 5.6
+      }
+    },
+    "labelcache": {
+      "$ref": "onoff.json"
+    },
+    "labelitem": {
+      "type": "string"
+    },
+    "labelmaxscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 5.0
+      }
+    },
+    "labelminscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 5.0
+      }
+    },
+    "labelmaxscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "labelminscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "labelrequires": {
+      "type": "string"
+    },
+    "labelsizeitem": {
+      "type": "string",
+      "metadata": {
+        "maxVersion": 5.0
+      }
+    },
+    "mask": {
+      "type": "string",
+      "metadata": {
+        "minVersion": 6.2
+      }
+    },
+    "maxfeatures": {
+      "type": "integer"
+    },
+    "maxgeowidth": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "maxscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "maxscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 5.0
+      }
+    },
+    "metadata": {
+      "$ref": "metadata.json"
+    },
+    "mingeowidth": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "minscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "minscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 5.0
+      }
+    },
+    "name": {
+      "type": "string"
+    },
+    "offsite": {
+      "$ref": "color.json"
+    },
+    "opacity": {
+      "type": "integer",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "plugin": {
+      "type": "string"
+    },
+    "postlabelcache": {
+      "type": "boolean"
+    },
+    "processing": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "projection": {
+      "$ref": "projection.json"
+    },
+    "requires": {
+      "type": "string"
+    },
+    "scaletokens": {
+      "type": "array",
+      "items": {
+        "$ref": "scaletoken.json"
+      },
+      "metadata": {
+        "minVersion": 6.4
+      }
+    },
+    "sizeunits": {
+      "enum": [ "feet", "inches", "kilometers", "meters", "miles", "nauticalmiles", "pixels" ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [ "on", "off", "default" ]
+    },
+    "styleitem": {
+      "type": "string"
+    },
+    "symbolscaledenom": {
+      "type": "number"
+    },
+    "template": {
+      "type": "string"
+    },
+    "tileindex": {
+      "type": "string"
+    },
+    "tileitem": {
+      "type": "string"
+    },
+    "tilesrs": {
+      "type": "string"
+    },
+    "tolerance": {
+      "type": "number"
+    },
+    "toleranceunits": {
+      "enum": [ "pixels", "feet", "inches", "kilometers", "meters", "miles", "nauticalmiles", "dd" ]
+    },
+    "transparency": {
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "enum": [ "alpha" ]
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "transform": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "position.json"
+        }
+      ]
+    },
+    "type": {
+      "enum": [ "chart", "circle", "line", "point", "polygon", "raster", "query", "annotation" ]
+    },
+    "units": {
+      "enum": [ "dd", "feet", "inches", "kilometers", "meters", "miles", "nauticalmiles", "percentages", "pixels" ]
+    },
+    "utfdata": {
+      "type": "string",
+      "metadata": {
+        "minVersion": 7.0
+      }
+    },
+    "utfitem": {
+      "type": "string",
+      "metadata": {
+        "minVersion": 7.0
+      }
+    },
+    "validation": {
+      "$ref": "validation.json"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-FROM apache/airflow:2.1.2
+FROM apache/airflow:2.1.2-python3.8
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 ARG AIRFLOW_USER_HOME=/usr/local/airflow
@@ -71,7 +71,5 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
     && ldconfig
 
 WORKDIR ${AIRFLOW_USER_HOME}
-
-EXPOSE 8080
 
 CMD [ "/run.sh" ]

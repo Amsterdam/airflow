@@ -1,0 +1,166 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^__[a-z]+__$": {}
+  },
+  "properties": {
+    "__type__": {
+      "enum": [ "class" ]
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "backgroundcolor": {
+      "allOf": [
+        {
+          "$ref": "color.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "color": {
+      "allOf": [
+        {
+          "$ref": "color.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "debug": {
+      "$ref": "onoff.json"
+    },
+    "expression": {
+      "$ref": "expression.json"
+    },
+    "group": {
+      "type": "string"
+    },
+    "keyimage": {
+      "type": "string",
+      "description": "filename"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "$ref": "label.json"
+      }
+    },
+    "leader": {
+      "allOf": [
+        {
+          "$ref": "leader.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.2
+      }
+    },
+    "maxscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "maxscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "maxsize": {
+      "type": "integer",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "metadata": {
+      "$ref": "metadata.json"
+    },
+    "minfeaturesize": {
+      "type": "number"
+    },
+    "minscale": {
+      "type": "number",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "minscaledenom": {
+      "type": "number"
+    },
+    "minsize": {
+      "type": "integer",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "name": {
+      "type": "string"
+    },
+    "outlinecolor": {
+      "allOf": [
+        {
+          "$ref": "color.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "size": {
+      "type": "integer",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "status": {
+      "$ref": "onoff.json"
+    },
+    "styles": {
+      "type": "array",
+      "items": {
+        "$ref": "style.json"
+      },
+      "metadata": {
+        "minVersion": 4.0
+      }
+    },
+    "symbol": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "symbol.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "template": {
+      "type": "string",
+      "description": "filename"
+    },
+    "text": {
+      "$ref": "expression.json"
+    },
+    "title": {
+      "type": "string"
+    },
+    "validation": {
+      "$ref": "validation.json"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+[console_scripts]
+mappyfile = mappyfile.cli:main
+

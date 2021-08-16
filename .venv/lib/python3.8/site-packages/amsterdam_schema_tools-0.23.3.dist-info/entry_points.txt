@@ -1,0 +1,4 @@
+[console_scripts]
+django = schematools.contrib.django.cli:main
+schema = schematools.cli:main
+

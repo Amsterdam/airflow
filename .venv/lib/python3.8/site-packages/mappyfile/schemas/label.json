@@ -1,0 +1,352 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^__[a-z]+__$": {}
+  },
+  "properties": {
+    "__type__": {
+      "enum": [ "label" ]
+    },
+    "include": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "align": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [ "left", "center", "right" ],
+          "additionalProperties": false
+        },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute"
+        }
+      ],
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "angle": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [ "auto", "auto2", "follow" ],
+          "additionalProperties": false
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute",
+          "metadata": {
+            "minVersion": 5.0
+          }
+        }
+      ]
+    },
+    "antialias": {
+      "type": "boolean"
+    },
+    "backgroundcolor": {
+      "allOf": [
+        {
+          "$ref": "color.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 6.0
+      }
+    },
+    "backgroundshadowcolor": {
+      "allOf": [
+        {
+          "$ref": "color.json"
+        }
+      ],
+      "metadata": {
+        "maxVersion": 6.0
+      }
+    },
+    "backgroundshadowsize": {
+      "allOf": [
+        {
+          "$ref": "points.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.0
+      }
+    },
+    "buffer": {
+      "type": "integer"
+    },
+    "color": {
+      "oneOf": [
+        { "$ref": "color.json" },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute",
+          "metadata": {
+            "minVersion": 5.0
+          }
+        }
+      ]
+    },
+    "encoding": {
+      "type": "string",
+      "metadata": {
+        "maxVersion": 7.6
+      }
+    },
+    "expression": {
+      "allOf": [
+        {
+          "$ref": "expression.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.2
+      }
+    },
+    "font": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute",
+          "metadata": {
+            "minVersion": 5.6
+          }
+        }
+      ]
+    },
+    "force": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "enum": [ "group" ],
+          "metadata": {
+            "minVersion": 6.2
+          }
+        }
+      ]
+    },
+    "maxlength": {
+      "type": "integer",
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "maxoverlapangle": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 6.0
+      }
+    },
+    "maxscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "maxsize": {
+      "type": "integer"
+    },
+    "mindistance": {
+      "type": "integer"
+    },
+    "minfeaturesize": {
+      "oneOf": [
+        { "enum": [ "auto" ] },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "minscaledenom": {
+      "type": "number",
+      "metadata": {
+        "minVersion": 5.4
+      }
+    },
+    "minsize": {
+      "type": "integer"
+    },
+    "offset": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\[(.*?)\\]$",
+            "description": "attribute"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "metadata": {
+            "minVersion": 7.6
+          }
+        }
+      ]
+    },
+    "outlinecolor": {
+      "oneOf": [
+        { "$ref": "color.json" },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute",
+          "metadata": {
+            "minVersion": 5.0
+          }
+        }
+      ]
+    },
+    "outlinewidth": {
+      "type": "integer"
+    },
+    "partials": {
+      "type": "boolean"
+    },
+    "position": {
+      "oneOf": [
+        { "enum": [ "auto" ] },
+        {
+          "$ref": "position.json"
+        }
+      ]
+    },
+    "priority": {
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute"
+        }
+      ],
+      "metadata": {
+        "minVersion": 5.0
+      }
+    },
+    "repeatdistance": {
+      "type": "integer",
+      "default": 0,
+      "metadata": {
+        "minVersion": 5.6
+      }
+    },
+    "shadowcolor": {
+      "$ref": "color.json"
+    },
+    "shadowsize": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        {
+          "type": "array",
+          "items": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\[(.*?)\\]$",
+              "description": "attribute"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2,
+          "metadata": {
+            "minVersion": 6.0
+          }
+        }
+      ]
+    },
+    "size": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string",
+          "enum": [ "tiny", "small", "medium", "large", "giant" ],
+          "additionalProperties": false
+        },
+        {
+          "type": "string",
+          "pattern": "^\\[(.*?)\\]$",
+          "description": "attribute",
+          "metadata": {
+            "minVersion": 5.0
+          }
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "expression.json"
+            }
+          ],
+          "metadata": {
+            "maxVersion": 7.6
+          }
+        }
+      ]
+    },
+    "styles": {
+      "type": "array",
+      "items": {
+        "$ref": "style.json"
+      }
+    },
+    "text": {
+      "oneOf": [
+        {
+          "$ref": "expression.json"
+        }
+      ],
+      "metadata": {
+        "minVersion": 6.2
+      }
+    },
+    "type": {
+      "type": "string",
+      "enum": [ "bitmap", "truetype" ],
+      "additionalProperties": false
+    },
+    "wrap": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1
+    }
+  }
+}
