@@ -3,6 +3,7 @@ LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 USER root
 ARG AIRFLOW_PATH=/opt/airflow/
+ENV AIRFLOW_PATH=/opt/airflow/
 
 RUN apt-get update \
  && apt-get dist-upgrade -y \
@@ -52,12 +53,15 @@ COPY vars/ ${AIRFLOW_PATH}/vars/
 COPY vsd/ ${AIRFLOW_PATH}/vsd/
 COPY plugins/ ${AIRFLOW_PATH}/plugins/
 # COPY src/dags/ ${AIRFLOW_PATH}/dags/
-COPY scripts/run.sh /run.sh
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
 RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
 RUN python ${AIRFLOW_PATH}/scripts/mkvars.py
+
+COPY scripts/run.sh /opt/airflow/scripts/run.sh
+COPY scripts/scheduler_startup.sh /opt/airflow/scripts/scheduler_startup.sh
+RUN chmod 777 /opt/airflow/scripts/
 
 #Installing Oracle instant client
 WORKDIR /opt/oracle
@@ -74,4 +78,4 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
 
 USER airflow
 
-CMD [ "scripts/run.sh" ]
+# CMD [ "/opt/airflow/scripts/run.sh" ]

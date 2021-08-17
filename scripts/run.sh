@@ -92,7 +92,7 @@ airflow connections add rdw_conn_id \
 # airflow webserver
 
 set -o errexit
-airflow variables import ${AIRFLOW_USER_HOME}/vars/vars.json
+airflow variables import ${AIRFLOW_PATH}/vars/vars.json
 
 # Check all dags by running them as python modules.
 # This is whait the Airflow dagbag is also doing.
