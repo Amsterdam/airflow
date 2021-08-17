@@ -7,7 +7,7 @@ set -o nounset
 set -o pipefail
 # set -o xtrace # Uncomment this line for debugging purposes
 
-args=("--pid" "$AIRFLOW_PID_FILE" "$@")
+# args=("--pid" "$AIRFLOW_PID_FILE" "$@")
 
 airflow db init  # db init is not destructive, so can be re-run at startup
 airflow db upgrade  # upgrade DB if needed
@@ -24,9 +24,9 @@ airflow db upgrade  # upgrade DB if needed
 # WARNING: DEPRECATED way of creating Connections, please use Env variables.
 
 set +e # when airflow connections delete is executed, and cannot find the connection, it should not lead to a stop but continue.
-airflow connections delete slack
-airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
-    --conn-password "/$SLACK_WEBHOOK" --conn-type http
+# airflow connections delete slack
+# airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
+#     --conn-password "/$SLACK_WEBHOOK" --conn-type http
 
 airflow connections delete geozet_conn_id
 airflow connections add geozet_conn_id --conn-host http://geozet.koop.overheid.nl \
