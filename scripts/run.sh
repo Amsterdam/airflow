@@ -1,17 +1,12 @@
 #!/bin/bash
 
-# shellcheck disable=SC1091
-
-set -o errexit
-set -o nounset
-set -o pipefail
-# set -o xtrace # Uncomment this line for debugging purposes
-
-# args=("--pid" "$AIRFLOW_PID_FILE" "$@")
-
+echo "START#########################"
+export AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN:-`echo $AIRFLOW_CONN_POSTGRES_DEFAULT | cut -d'?' -f 1`}
+export AIRFLOW_CONN_POSTGRES_VSD={$AIRFLOW_CONN_POSTGRES_VSD:-$AIRFLOW__CORE__SQL_ALCHEMY_CONN}
 airflow db init  # db init is not destructive, so can be re-run at startup
 airflow db upgrade  # upgrade DB if needed
-
+python scripts/mkvars.py
+echo "----------------------------------------------------------------"
 # creating an admin and regular users (nessacary when using RABC=True in the airflow.cnf)
 # airflow users create -r Admin -u admin -e admin@example.com -f admin -l admin -p ${AIRFLOW_USER_ADMIN_PASSWD:-admin}
 
@@ -22,11 +17,10 @@ airflow db upgrade  # upgrade DB if needed
 # So we (re-)create the slack connection on startup.
 #
 # WARNING: DEPRECATED way of creating Connections, please use Env variables.
-
-set +e # when airflow connections delete is executed, and cannot find the connection, it should not lead to a stop but continue.
-# airflow connections delete slack
-# airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
-#     --conn-password "/$SLACK_WEBHOOK" --conn-type http
+echo "CONNECTIONS***********************************"
+airflow connections delete slack
+airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
+    --conn-password "/$SLACK_WEBHOOK" --conn-type http
 
 airflow connections delete geozet_conn_id
 airflow connections add geozet_conn_id --conn-host http://geozet.koop.overheid.nl \
@@ -90,8 +84,7 @@ airflow connections add rdw_conn_id \
 # airflow variables -i vars/vars.json &
 # airflow scheduler &
 # airflow webserver
-
-set -o errexit
+echo "VARS***********************************"
 airflow variables import ${AIRFLOW_PATH}/vars/vars.json
 
 # Check all dags by running them as python modules.
@@ -104,7 +97,6 @@ airflow variables import ${AIRFLOW_PATH}/vars/vars.json
 # stops on errors (set -e).
 #python scripts/checkdags.py || exit
 
-#echo -e "**************************** My ${AIRFLOW_USER_HOME} is HOME *************************************"
-#echo -e "the contents of  ${AIRFLOW_USER_HOME} is:" && ls -lR ${AIRFLOW_USER_HOME}
-# echo "my file /opt/bitnami/scripts/airflow-env.sh = " && cat /opt/bitnami/scripts/airflow-env.sh
-# cd ${AIRFLOW_USER_HOME}
+# sleep infinity
+# /usr/local/bin/supervisord --config /usr/local/airflow/etc/supervisord.conf
+echo "END"

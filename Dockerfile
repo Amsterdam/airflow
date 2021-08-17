@@ -48,6 +48,7 @@ RUN apt-get update \
 
 COPY scripts/mkvars.py ${AIRFLOW_PATH}/scripts/mkvars.py
 COPY scripts/mkuser.py ${AIRFLOW_PATH}/scripts/mkuser.py
+COPY scripts/run.sh ${AIRFLOW_PATH}/scripts/run.sh
 COPY data/ ${AIRFLOW_PATH}/data/
 COPY vars/ ${AIRFLOW_PATH}/vars/
 COPY vsd/ ${AIRFLOW_PATH}/vsd/
@@ -76,6 +77,7 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
 # RUN mkdir -p $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
 # RUN chown 50000:50000 $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
 
+WORKDIR ${AIRFLOW_PATH}
 USER airflow
 
 # CMD [ "/opt/airflow/scripts/run.sh" ]
