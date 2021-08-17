@@ -2,7 +2,7 @@ FROM apache/airflow:2.1.2-python3.8
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 USER root
-ENV AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_PATH=/opt/airflow/
 
 RUN apt-get update \
  && apt-get dist-upgrade -y \
@@ -45,18 +45,19 @@ RUN apt-get update \
         libterm-readpassword-perl \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
-COPY scripts/mkvars.py ${AIRFLOW_HOME}/scripts/mkvars.py
-COPY scripts/mkuser.py ${AIRFLOW_HOME}/scripts/mkuser.py
-COPY data/ ${AIRFLOW_HOME}/data/
-COPY vars/ ${AIRFLOW_HOME}/vars/
-COPY vsd/ ${AIRFLOW_HOME}/vsd/
-COPY plugins/ ${AIRFLOW_HOME}/plugins/
+COPY scripts/mkvars.py ${AIRFLOW_PATH}/scripts/mkvars.py
+COPY scripts/mkuser.py ${AIRFLOW_PATH}/scripts/mkuser.py
+COPY data/ ${AIRFLOW_PATH}/data/
+COPY vars/ ${AIRFLOW_PATH}/vars/
+COPY vsd/ ${AIRFLOW_PATH}/vsd/
+COPY plugins/ ${AIRFLOW_PATH}/plugins/
+# COPY src/dags/ ${AIRFLOW_PATH}/dags/
 COPY scripts/run.sh /run.sh
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
 RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
-RUN python ${AIRFLOW_HOME}/scripts/mkvars.py
+RUN python ${AIRFLOW_PATH}/scripts/mkvars.py
 
 #Installing Oracle instant client
 WORKDIR /opt/oracle
@@ -68,8 +69,8 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
     && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
     && ldconfig
 
-# RUN mkdir -p $AIRFLOW_HOME/dags/ $AIRFLOW_HOME/logs/  $AIRFLOW_HOME/plugins/
-# RUN chown 50000:50000 $AIRFLOW_HOME/dags/ $AIRFLOW_HOME/logs/  $AIRFLOW_HOME/plugins/
+# RUN mkdir -p $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
+# RUN chown 50000:50000 $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
 
 USER airflow
 
