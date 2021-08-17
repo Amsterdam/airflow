@@ -2,8 +2,8 @@ FROM apache/airflow:2.1.2-python3.8
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 USER root
-ARG AIRFLOW_PATH=/opt/airflow/
-ENV AIRFLOW_PATH=/opt/airflow/
+ARG AIRFLOW_PATH=/opt/airflow
+ENV AIRFLOW_PATH=/opt/airflow
 
 RUN apt-get update \
  && apt-get dist-upgrade -y \
@@ -46,23 +46,20 @@ RUN apt-get update \
         libterm-readpassword-perl \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
-COPY scripts/mkvars.py ${AIRFLOW_PATH}/scripts/mkvars.py
-COPY scripts/mkuser.py ${AIRFLOW_PATH}/scripts/mkuser.py
-COPY scripts/run.sh ${AIRFLOW_PATH}/scripts/run.sh
+COPY scripts/ ${AIRFLOW_PATH}/scripts/
 COPY data/ ${AIRFLOW_PATH}/data/
 COPY vars/ ${AIRFLOW_PATH}/vars/
 COPY vsd/ ${AIRFLOW_PATH}/vsd/
 COPY plugins/ ${AIRFLOW_PATH}/plugins/
-# COPY src/dags/ ${AIRFLOW_PATH}/dags/
 
 COPY requirements* ./
 ARG PIP_REQUIREMENTS=requirements.txt
 RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
 RUN python ${AIRFLOW_PATH}/scripts/mkvars.py
 
-COPY scripts/run.sh /opt/airflow/scripts/run.sh
-COPY scripts/scheduler_startup.sh /opt/airflow/scripts/scheduler_startup.sh
-RUN chmod 777 /opt/airflow/scripts/
+# COPY scripts/run.sh /opt/airflow/scripts/run.sh
+# COPY scripts/scheduler_startup.sh /opt/airflow/scripts/scheduler_startup.sh
+# RUN chmod 777 /opt/airflow/scripts/
 
 #Installing Oracle instant client
 WORKDIR /opt/oracle

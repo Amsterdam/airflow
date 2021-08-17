@@ -1,4 +1,2 @@
 #!/bin/bash
-
-/opt/airflow/scripts/run.sh &
-airflow scheduler
+airflow scheduler && /opt/airflow/scripts/run.sh

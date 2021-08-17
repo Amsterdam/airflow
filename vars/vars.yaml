@@ -58,13 +58,6 @@ openbareverlichting:
   data_endpoints:
     objects: services/rest_sia.php/SIAService/objecten
     objecttypes: services/rest_sia.php/SIAService/types
-trm:
-  - zip: Tram KGEs.zip
-    name: tram
-    shp: KGE_hartlijnen_Amsterdam_2.054.shp
-  - zip: Metro KGEs.zip
-    name: metro
-    shp: Metro KGEs.shp
 winkelgebieden:
   schema_end_point: datasets/winkelgebieden/winkelgebieden
 bouwstroompunten:
@@ -352,3 +345,8 @@ stroomstoringen:
                     returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&\
                     groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&\
                     returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token="
+leidingeninfrastuctuur:
+  files_to_download:
+    wibon: Wibon.sqlite
+    source_tables: [mantelbuizen, materiaal, klasse, inwinningstype, mantelbuisdiameter, hoofdcategorie, thema, mantelbuistype, janee, nauwkeurigheid, eigenaar, functie, groep, kabeltype, kabeldiameter, fase, bouwtype, type, kabels]
+    target_tables: [mantelbuizen, ondergrondse_kabels, bovengrondse_kabels]
