@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "START#########################"
+echo "#########[START AIRFLOW DB INIT]###############################################"
 export AIRFLOW__CORE__SQL_ALCHEMY_CONN=${AIRFLOW__CORE__SQL_ALCHEMY_CONN:-`echo $AIRFLOW_CONN_POSTGRES_DEFAULT | cut -d'?' -f 1`}
 export AIRFLOW_CONN_POSTGRES_VSD={$AIRFLOW_CONN_POSTGRES_VSD:-$AIRFLOW__CORE__SQL_ALCHEMY_CONN}
 
@@ -18,7 +18,7 @@ python scripts/mkvars.py
 # So we (re-)create the slack connection on startup.
 #
 # WARNING: DEPRECATED way of creating Connections, please use Env variables.
-echo "CONNECTIONS***********************************"
+echo "**********[SETUP CONNECTIONS]***************************************************"
 airflow connections delete slack
 airflow connections add slack --conn-host $SLACK_WEBHOOK_HOST \
     --conn-password "/$SLACK_WEBHOOK" --conn-type http
@@ -85,7 +85,7 @@ airflow connections add rdw_conn_id \
 # airflow variables -i vars/vars.json &
 # airflow scheduler &
 # airflow webserver
-echo "VARS***********************************"
+echo "*************[IMPORT VARS]*******************************************"
 airflow variables import ${AIRFLOW_PATH}/vars/vars.json
 
 # Check all dags by running them as python modules.
@@ -100,4 +100,4 @@ airflow variables import ${AIRFLOW_PATH}/vars/vars.json
 
 # sleep infinity
 # /usr/local/bin/supervisord --config /usr/local/airflow/etc/supervisord.conf
-echo "END"
+echo "+++++++++++++[DONE...init]+++++++++++++++++++++++++++++++++++++"
