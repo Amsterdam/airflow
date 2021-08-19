@@ -51,17 +51,13 @@ COPY data/ ${AIRFLOW_PATH}/data/
 COPY vars/ ${AIRFLOW_PATH}/vars/
 COPY vsd/ ${AIRFLOW_PATH}/vsd/
 COPY plugins/ ${AIRFLOW_PATH}/plugins/
-
 COPY requirements* ./
+
 ARG PIP_REQUIREMENTS=requirements.txt
 RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
 RUN python ${AIRFLOW_PATH}/scripts/mkvars.py
 
-# COPY scripts/run.sh /opt/airflow/scripts/run.sh
-# COPY scripts/scheduler_startup.sh /opt/airflow/scripts/scheduler_startup.sh
-# RUN chmod 777 /opt/airflow/scripts/
-
-#Installing Oracle instant client
+# Installing Oracle instant client for sources that are Oracle DB's
 WORKDIR /opt/oracle
 RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
     && unzip instantclient-basiclite-linuxx64.zip \
@@ -71,10 +67,8 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
     && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
     && ldconfig
 
-# RUN mkdir -p $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
-# RUN chown 50000:50000 $AIRFLOW_PATH/dags/ $AIRFLOW_PATH/logs/  $AIRFLOW_PATH/plugins/
-
+# setup the permissions so the airflow user can access the Python libaries
+RUN chmod -R 755 /root
 WORKDIR ${AIRFLOW_PATH}
 USER airflow
-
-# CMD [ "/opt/airflow/scripts/run.sh" ]
+ENV PYTHONPATH=/root/.local/lib/python3.8/site-packages/
