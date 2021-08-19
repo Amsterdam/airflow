@@ -69,6 +69,9 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
 
 # setup the permissions so the airflow user can access the Python libaries
 RUN chmod -R 755 /root
+# setup the permissions so the airflow user can write to the airflow base path (for logs e.g.)
+RUN chown -R airflow:airflow ${AIRFLOW_PATH}
+
 WORKDIR ${AIRFLOW_PATH}
 USER airflow
 ENV PYTHONPATH=/root/.local/lib/python3.8/site-packages/
