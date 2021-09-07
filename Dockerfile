@@ -1,11 +1,10 @@
-FROM docker.io/bitnami/airflow-worker:2.0.1
+FROM apache/airflow:2.1.2-python3.8
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
-ARG AIRFLOW_USER_HOME=/usr/local/airflow
-ENV AIRFLOW_USER_HOME=${AIRFLOW_USER_HOME}
-ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
-
 USER root
+ARG AIRFLOW_PATH=/opt/airflow
+ENV AIRFLOW_PATH=/opt/airflow
+
 RUN apt-get update \
  && apt-get dist-upgrade -y \
  && apt-get autoremove -y \
@@ -47,26 +46,18 @@ RUN apt-get update \
         libterm-readpassword-perl \
   && rm -rf /var/lib/apt/lists/* /var/cache/debconf/*-old
 
-COPY scripts/mkvars.py ${AIRFLOW_USER_HOME}/scripts/mkvars.py
-COPY scripts/mkuser.py ${AIRFLOW_USER_HOME}/scripts/mkuser.py
-# COPY scripts/checkdags.py ${AIRFLOW_USER_HOME}/scripts/checkdags.py
-COPY data/ ${AIRFLOW_USER_HOME}/data/
-COPY vars ${AIRFLOW_USER_HOME}/vars/
-COPY vsd ${AIRFLOW_USER_HOME}/vsd/
-# this copy is used to make sure the VSD dag (.py) gets loaded correctly
-# Airflow is complaining about missing the files in the path below
-# TODO figure out why, seems that vsd .py file is in /opt/bitnami/airflow/dags/git_dags/
-# and it's looking in the code for the /vsd/ folder one level up (parent). So it is looking
-# in /opt/bitnami/airflow/dags/vsd/ instead of ${AIRFLOW_USER_HOME}/vsd/
-COPY vsd /opt/bitnami/airflow/dags/vsd/
-COPY scripts/run.sh /run.sh
-
+COPY scripts/ ${AIRFLOW_PATH}/scripts/
+COPY data/ ${AIRFLOW_PATH}/data/
+COPY vars/ ${AIRFLOW_PATH}/vars/
+COPY vsd/ ${AIRFLOW_PATH}/vsd/
+COPY plugins/ ${AIRFLOW_PATH}/plugins/
 COPY requirements* ./
-ARG PIP_REQUIREMENTS=requirements.txt
-RUN . /opt/bitnami/airflow/venv/bin/activate && pip install --no-cache-dir -r $PIP_REQUIREMENTS
-RUN /opt/bitnami/airflow/venv/bin/python ${AIRFLOW_USER_HOME}/scripts/mkvars.py
 
-# Installing Oracle instant client
+ARG PIP_REQUIREMENTS=requirements.txt
+RUN pip install --no-cache-dir -r $PIP_REQUIREMENTS
+RUN python ${AIRFLOW_PATH}/scripts/mkvars.py
+
+# Installing Oracle instant client for sources that are Oracle DB's
 WORKDIR /opt/oracle
 RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
     && unzip instantclient-basiclite-linuxx64.zip \
@@ -76,10 +67,11 @@ RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantcli
     && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
     && ldconfig
 
-USER 1001
-WORKDIR ${AIRFLOW_USER_HOME}
+# setup the permissions so the airflow user can access the Python libaries
+RUN chmod -R 755 /root
+# setup the permissions so the airflow user can write to the airflow base path (for logs e.g.)
+RUN chown -R airflow:airflow ${AIRFLOW_PATH}
 
-EXPOSE 8080
-
-ENTRYPOINT [ "/opt/bitnami/scripts/airflow-worker/entrypoint.sh" ]
-CMD [ "/run.sh", "worker" ]
+WORKDIR ${AIRFLOW_PATH}
+USER airflow
+ENV PYTHONPATH=/root/.local/lib/python3.8/site-packages/
