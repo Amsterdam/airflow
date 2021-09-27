@@ -1,4 +1,4 @@
-FROM apache/airflow:2.1.2-python3.8
+FROM apache/airflow:2.1.4-python3.9
 LABEL maintainer "Gemeente Amsterdam <datapunt@amsterdam.nl>"
 
 USER root
