@@ -74,4 +74,4 @@ RUN chown -R airflow:airflow ${AIRFLOW_PATH}
 
 WORKDIR ${AIRFLOW_PATH}
 USER airflow
-ENV PYTHONPATH=/root/.local/lib/python3.8/site-packages/
+ENV PYTHONPATH=/root/.local/lib/python3.9/site-packages/
